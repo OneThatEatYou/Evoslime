@@ -10,7 +10,8 @@ public class MonsterData : ScriptableObject
 
     [Header("Stats")]
     public float moveSpeed;
-    public int appetite;
+    public uint appetite;
+    public uint digestionSpeed;
 
     [Header("Behaviour")]
     public List<FoodType> diet = new List<FoodType>();

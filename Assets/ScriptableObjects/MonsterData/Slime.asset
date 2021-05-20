@@ -14,4 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   monsterName: Slime
   moveSpeed: 120
+  appetite: 1000
+  digestionSpeed: 3
   diet: 0000000003000000

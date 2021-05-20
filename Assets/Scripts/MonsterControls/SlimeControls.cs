@@ -66,7 +66,7 @@ public class SlimeControls : MonsterControls
 
         if (collision.gameObject.TryGetComponent(out food))
         {
-            if (IsEdible(food))
+            if (IsEdible(food) && !IsFull())
             {
                 Eat(food.Consume());
             }
