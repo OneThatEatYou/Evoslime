@@ -1,5 +1,5 @@
 {
-    "name": "InputMaster",
+    "name": "PlayerInputAction",
     "maps": [
         {
             "name": "Player",
@@ -9,6 +9,14 @@
                     "name": "Movement",
                     "type": "Button",
                     "id": "00e9614f-e342-4058-a5e9-95f4d2cf2122",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Attack",
+                    "type": "Button",
+                    "id": "a36c2e86-e3e5-4f2e-9818-9a87c615302e",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -124,6 +132,17 @@
                     "action": "Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "d09d534a-8377-4e06-86fe-984614685c95",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard and mouse",
+                    "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

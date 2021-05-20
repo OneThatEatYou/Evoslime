@@ -5,19 +5,25 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    public MonsterData monsterData;
-
     Vector2 movementInput;
 
+    MonsterControls monsterControls;
     PlayerInputAction playerInput;
-    Rigidbody2D rb;
-    Animator anim;
 
     private void Awake()
     {
         playerInput = new PlayerInputAction();
-        rb = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
+        monsterControls = GetComponent<MonsterControls>();
+
+        if (!monsterControls)
+        {
+            Debug.LogError($"No monster controls found in {name}");
+        }
+    }
+
+    private void Start()
+    {
+        playerInput.Player.Attack.performed += contex => monsterControls.Attack(movementInput);
     }
 
     private void OnEnable()
@@ -37,13 +43,6 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Move(movementInput);
-    }
-
-    void Move(Vector2 input)
-    {
-        rb.velocity = input * monsterData.moveSpeed * Time.fixedDeltaTime;
-        anim.SetFloat("Direction", input.x);
-        anim.SetFloat("Speed", rb.velocity.magnitude);
+        monsterControls.Move(movementInput);
     }
 }
