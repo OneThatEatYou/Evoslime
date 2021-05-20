@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SlimeControls : MonsterControls
 {
-    [Header("Attack")]
+    [Header("Attack Animation")]
     public float chargeTime;
     public float attackTime;
     public float dashSpeed;
@@ -64,16 +64,12 @@ public class SlimeControls : MonsterControls
     {
         Consumable food;
 
-        Debug.Log($"Collided with {collision.gameObject.name}");
-
         if (collision.gameObject.TryGetComponent(out food))
         {
-            Eat(food.Consume());
+            if (IsEdible(food))
+            {
+                Eat(food.Consume());
+            }
         }
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-
     }
 }

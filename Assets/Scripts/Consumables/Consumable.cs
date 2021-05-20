@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Consumable : MonoBehaviour
 {
-    [Expandable] public FoodData foodData;
+    public FoodType ConsumableFoodType { get { return foodData.foodType; } }
+
+    [Expandable, SerializeField] FoodData foodData;
 
     public FoodData Consume()
     {
