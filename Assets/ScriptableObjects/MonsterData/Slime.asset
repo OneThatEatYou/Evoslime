@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Slime
   m_EditorClassIdentifier: 
   monsterName: Slime
+  maxHealth: 100
   moveSpeed: 120
   appetite: 1000
   digestionSpeed: 3
+  damage: 5
   diet: 0000000003000000

@@ -7,15 +7,44 @@ public abstract class MonsterControls : MonoBehaviour
 {
     [Expandable] public MonsterData monsterData;
 
+    #region Delegates and Events
+    public delegate void OnIntChangedHandler(int newValue);
+    public event OnIntChangedHandler OnHealthChangedHandler;
+    #endregion
+
+    #region Properties
+    protected int MaxHealth { get { return monsterData.maxHealth; } }
+    int health;
+    protected int Health
+    {
+        get
+        {
+            return health;
+        }
+        set
+        {
+            health = value;
+
+            if (OnHealthChangedHandler != null)
+            {
+                OnHealthChangedHandler.Invoke(health);
+            }
+
+            if (Health <= 0)
+            {
+                Die();
+            }
+        }
+    }
     protected float MoveSpeed { get { return monsterData.moveSpeed; } }
     protected List<FoodType> Diet { get { return monsterData.diet; } }
-    protected float Appetite { get { return monsterData.appetite; } }
+    protected int Appetite { get { return monsterData.appetite; } }
     protected float DigestionSpeed { get { return monsterData.digestionSpeed; } }
-    protected int Fullness
+    protected float Fullness
     { 
         get 
         {
-            int sum = 0;
+            float sum = 0;
 
             foreach (var item in stomach)
             {
@@ -24,12 +53,17 @@ public abstract class MonsterControls : MonoBehaviour
 
             return sum;
         } 
-    }
+    } //sum of all nutrient values in the stomach
+    #endregion
 
     protected bool isAttacking = false;
+    bool isKnockingBack = false;
+    bool isInvinsible = false;
+    float movementWeight = 1;
+    Coroutine knockBackTimer;
     protected int direction = -1;
-    protected Dictionary<NutritionType, int> stomach = new Dictionary<NutritionType, int>();
-    protected Dictionary<NutritionType, int> absorbedNutrients = new Dictionary<NutritionType, int>();
+    protected Dictionary<NutritionType, float> stomach = new Dictionary<NutritionType, float>();
+    protected Dictionary<NutritionType, float> absorbedNutrients = new Dictionary<NutritionType, float>();
 
     protected Rigidbody2D rb;
     protected Animator anim;
@@ -42,6 +76,8 @@ public abstract class MonsterControls : MonoBehaviour
 
     private void Start()
     {
+        health = MaxHealth;
+
         InvokeRepeating("Digest", 0, 1);
     }
 
@@ -50,10 +86,97 @@ public abstract class MonsterControls : MonoBehaviour
         
     }
 
-    public abstract void Move(Vector2 input);
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        // attempt to consume the food that this monster collides with
+        Consumable food;
+
+        if (collision.gameObject.TryGetComponent(out food))
+        {
+            if (IsEdible(food) && !IsFull())
+            {
+                Eat(food.Consume());
+            }
+        }
+    }
+
+    public virtual void Move(Vector2 input)
+    {
+        if (isAttacking || isKnockingBack)
+        { return; }
+
+        rb.velocity = input * MoveSpeed * movementWeight * Time.fixedDeltaTime;
+
+        if (input.x != 0)
+        {
+            anim.SetFloat("Direction", input.x);
+            direction = Mathf.RoundToInt(input.x);
+        }
+
+        anim.SetFloat("Speed", rb.velocity.magnitude);
+    }
 
     public abstract void Attack(Vector2 dir);
 
+    // called when another monster attacks this monster
+    public void TakeDamage(int damage, Vector2 knockbackDir)
+    {
+        if (isInvinsible)
+        { return; }
+
+        // hurt animation
+        // flash sprite
+        // hurt sfx
+
+        Health -= damage;
+        Knockback(knockbackDir, 18);
+
+        Debug.Log($"{name} took {damage} damage", gameObject);
+    }
+
+    void Knockback(Vector2 dir, float force)
+    {
+        if (dir.x == 0 && dir.y == 0)
+        { return; }
+
+        if (isKnockingBack)
+        {
+            StopCoroutine(knockBackTimer);
+        }
+
+        isKnockingBack = true;
+        isInvinsible = true;
+        rb.velocity = Vector2.zero;
+        rb.AddForce(dir * force, ForceMode2D.Impulse);
+        knockBackTimer = StartCoroutine(KnockbackRecoveryTimer(0.5f, 0.2f));
+    }
+
+    IEnumerator KnockbackRecoveryTimer(float knockbackTime, float recoveryTime)
+    {
+        float t = 0;
+
+        yield return new WaitForSeconds(knockbackTime);
+
+        movementWeight = 0;
+        isKnockingBack = false;
+        isInvinsible = false;
+
+        while (t < recoveryTime)
+        {
+            t += Time.deltaTime;
+            movementWeight = Mathf.Lerp(0, 1, Mathf.Pow(t / recoveryTime, 2));
+            yield return null;
+        }
+
+        movementWeight = 1;
+    }
+
+    void Die()
+    {
+        Debug.Log($"{name} has died", gameObject);
+    }
+
+    #region Food System
     public bool IsEdible(Consumable food)
     {
         return Diet.Contains(food.ConsumableFoodType);
@@ -82,7 +205,7 @@ public abstract class MonsterControls : MonoBehaviour
 
     protected void Digest()
     {
-        int fullness = Fullness;
+        float fullness = Fullness;
 
         if (fullness == 0)
         { return; }
@@ -91,7 +214,7 @@ public abstract class MonsterControls : MonoBehaviour
 
         foreach (NutritionType key in keys)
         {
-            int digestedAmount = Mathf.CeilToInt((float)stomach[key] / fullness * DigestionSpeed);
+            float digestedAmount = stomach[key] / fullness * DigestionSpeed;
 
             // moved digested amount from the stomach dict to absorbed dict
             stomach[key] -= digestedAmount;
@@ -104,7 +227,7 @@ public abstract class MonsterControls : MonoBehaviour
         }
     }
 
-    void AbsorbNutrients(NutritionType nutritionType, int amount)
+    void AbsorbNutrients(NutritionType nutritionType, float amount)
     {
         // check if it is the first time absorbing this nutrition
         if (absorbedNutrients.ContainsKey(nutritionType))
@@ -116,7 +239,9 @@ public abstract class MonsterControls : MonoBehaviour
             absorbedNutrients.Add(nutritionType, amount);
         }
     }
+    #endregion
 
+    #region Debug
     [ContextMenu("Print stomach contents")]
     void PrintStomach()
     {
@@ -138,4 +263,5 @@ public abstract class MonsterControls : MonoBehaviour
             Debug.Log(kvp.Key + " = " + kvp.Value);
         }
     }
+    #endregion
 }

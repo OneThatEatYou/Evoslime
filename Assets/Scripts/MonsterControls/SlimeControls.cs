@@ -4,26 +4,17 @@ using UnityEngine;
 
 public class SlimeControls : MonsterControls
 {
+    [Header("Attack")]
+    public Vector2 attackAreaOffset;
+    public float attackAreaRadius;
+    public LayerMask attackLayerMask;
+    Vector2 AttackAreaOrigin { get { return (Vector2)transform.position + attackAreaOffset; } } // the world position of attack area
+    List<MonsterControls> damagedMonsters = new List<MonsterControls>();
+
     [Header("Attack Animation")]
     public float chargeTime;
     public float attackTime;
     public float dashSpeed;
-
-    public override void Move(Vector2 input)
-    {
-        if (isAttacking)
-        { return; }
-
-        rb.velocity = input * MoveSpeed * Time.fixedDeltaTime;
-
-        if (input.x != 0)
-        {
-            anim.SetFloat("Direction", input.x);
-            direction = Mathf.RoundToInt(input.x);
-        }
-
-        anim.SetFloat("Speed", rb.velocity.magnitude);
-    }
 
     public override void Attack(Vector2 dir)
     {
@@ -51,25 +42,36 @@ public class SlimeControls : MonsterControls
 
         while (t < attackTime)
         {
-            rb.velocity = dashSpeed * dir * Mathf.Pow((1 - t / attackTime), 2);
+            rb.velocity = dashSpeed * dir * Mathf.Pow(1 - t / attackTime, 2);
             t += Time.deltaTime;
+
+            Collider2D[] cols = Physics2D.OverlapCircleAll(AttackAreaOrigin, attackAreaRadius, attackLayerMask);
+            ProcessTargets(cols);
 
             yield return null;
         }
 
         isAttacking = false;
+        damagedMonsters.Clear();
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    void ProcessTargets(Collider2D[] targets)
     {
-        Consumable food;
+        MonsterControls targetControls;
 
-        if (collision.gameObject.TryGetComponent(out food))
+        foreach (Collider2D target in targets)
         {
-            if (IsEdible(food) && !IsFull())
+            if (target.gameObject != gameObject && target.TryGetComponent(out targetControls) && !damagedMonsters.Contains(targetControls))
             {
-                Eat(food.Consume());
+                targetControls.TakeDamage(monsterData.damage, target.transform.position - transform.position);
+                damagedMonsters.Add(targetControls);
             }
         }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(AttackAreaOrigin, attackAreaRadius);
     }
 }
