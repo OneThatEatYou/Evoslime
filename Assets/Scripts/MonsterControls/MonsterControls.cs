@@ -39,7 +39,6 @@ public abstract class MonsterControls : MonoBehaviour
     protected float MoveSpeed { get { return monsterData.moveSpeed; } }
     protected List<FoodType> Diet { get { return monsterData.diet; } }
     protected int Appetite { get { return monsterData.appetite; } }
-    protected float DigestionSpeed { get { return monsterData.digestionSpeed; } }
     protected float Fullness
     { 
         get 
@@ -56,6 +55,8 @@ public abstract class MonsterControls : MonoBehaviour
     } //sum of all nutrient values in the stomach
     #endregion
 
+    public Material flashMat;
+
     protected bool isAttacking = false;
     bool isKnockingBack = false;
     bool isInvinsible = false;
@@ -63,14 +64,18 @@ public abstract class MonsterControls : MonoBehaviour
     Coroutine knockBackTimer;
     protected int direction = -1;
     protected Dictionary<NutritionType, float> foodConsumed = new Dictionary<NutritionType, float>();
+    protected Material startMat;
 
     protected Rigidbody2D rb;
     protected Animator anim;
+    protected SpriteRenderer spriteRenderer;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        startMat = spriteRenderer.material;
     }
 
     private void Start()
@@ -123,8 +128,8 @@ public abstract class MonsterControls : MonoBehaviour
         { return; }
 
         // hurt animation
-        // flash sprite
         // hurt sfx
+        StartCoroutine(FlashSprite(0.2f));
 
         Health -= damage;
         Knockback(knockbackDir, 18);
@@ -167,6 +172,15 @@ public abstract class MonsterControls : MonoBehaviour
         }
 
         movementWeight = 1;
+    }
+
+    IEnumerator FlashSprite(float duration)
+    {
+        spriteRenderer.material = flashMat;
+
+        yield return new WaitForSeconds(duration);
+
+        spriteRenderer.material = startMat;
     }
 
     void Die()

@@ -16,6 +16,8 @@ MonoBehaviour:
   maxHealth: 100
   moveSpeed: 120
   appetite: 1000
-  digestionSpeed: 3
   damage: 5
   diet: 0000000003000000
+  detectionRadius: 2
+  wanderCooldown: 10
+  wanderRadius: 4
