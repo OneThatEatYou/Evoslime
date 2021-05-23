@@ -6,10 +6,12 @@ using UnityEngine;
 public abstract class MonsterControls : MonoBehaviour
 {
     [Expandable] public MonsterData monsterData;
+    public GameObject deathParticle;
 
     #region Delegates and Events
     public delegate void OnIntChangedHandler(int newValue);
     public event OnIntChangedHandler OnHealthChangedHandler;
+    public event OnIntChangedHandler OnEatFoodHandler;
     #endregion
 
     #region Properties
@@ -24,11 +26,7 @@ public abstract class MonsterControls : MonoBehaviour
         set
         {
             health = value;
-
-            if (OnHealthChangedHandler != null)
-            {
-                OnHealthChangedHandler.Invoke(health);
-            }
+            OnHealthChangedHandler?.Invoke(health);
 
             if (Health <= 0)
             {
@@ -39,11 +37,11 @@ public abstract class MonsterControls : MonoBehaviour
     protected float MoveSpeed { get { return monsterData.moveSpeed; } }
     protected List<FoodType> Diet { get { return monsterData.diet; } }
     protected int Appetite { get { return monsterData.appetite; } }
-    protected float Fullness
+    protected int Fullness
     { 
         get 
         {
-            float sum = 0;
+            int sum = 0;
 
             foreach (var item in foodConsumed)
             {
@@ -63,7 +61,7 @@ public abstract class MonsterControls : MonoBehaviour
     float movementWeight = 1;
     Coroutine knockBackTimer;
     protected int direction = -1;
-    protected Dictionary<NutritionType, float> foodConsumed = new Dictionary<NutritionType, float>();
+    protected Dictionary<NutritionType, int> foodConsumed = new Dictionary<NutritionType, int>();
     protected Material startMat;
 
     protected Rigidbody2D rb;
@@ -80,7 +78,7 @@ public abstract class MonsterControls : MonoBehaviour
 
     private void Start()
     {
-        health = MaxHealth;
+        Health = MaxHealth;
     }
 
     private void Update()
@@ -186,6 +184,8 @@ public abstract class MonsterControls : MonoBehaviour
     void Die()
     {
         Debug.Log($"{name} has died", gameObject);
+        Instantiate(deathParticle, transform.position, Quaternion.identity);
+        Destroy(gameObject);
     }
     #endregion
 
@@ -214,6 +214,8 @@ public abstract class MonsterControls : MonoBehaviour
                 foodConsumed.Add(nutririonStruct.nutritionType, nutririonStruct.amount);
             }
         }
+
+        OnEatFoodHandler?.Invoke(Fullness);
     }
     #endregion
 

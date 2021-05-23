@@ -13,11 +13,11 @@ public class MonsterData : ScriptableObject
     public float moveSpeed = 100;
     [Tooltip("Max value displayable in food bar")] public int appetite = 1000;
     public int damage;
-
     public List<FoodType> diet = new List<FoodType>();
 
     [Header("AI behaviour")]
     public float detectionRadius;
+    public float attackRadius;
     public float wanderCooldown;
     public float wanderRadius;
 }

@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Slime
   m_EditorClassIdentifier: 
   monsterName: Slime
-  maxHealth: 100
+  maxHealth: 50
   moveSpeed: 120
   appetite: 1000
-  damage: 5
+  damage: 10
   diet: 0000000003000000
-  detectionRadius: 2
+  detectionRadius: 2.1
+  attackRadius: 0.7
   wanderCooldown: 10
   wanderRadius: 4

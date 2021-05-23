@@ -9,11 +9,18 @@ public class PlayerController : MonoBehaviour
 
     MonsterControls monsterControls;
     PlayerInputAction playerInput;
+    HUDManager hudManager;
 
     private void Awake()
     {
         playerInput = new PlayerInputAction();
         monsterControls = GetComponent<MonsterControls>();
+        hudManager = FindObjectOfType<HUDManager>();
+
+        // set up HUD
+        hudManager.Init(monsterControls.monsterData);
+        monsterControls.OnHealthChangedHandler += hudManager.SetHealthSlider;
+        monsterControls.OnEatFoodHandler += hudManager.SetFoodSlider;
 
         if (!monsterControls)
         {

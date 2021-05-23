@@ -14,6 +14,7 @@ public class AIController : MonoBehaviour
     [SerializeField, Expandable] MonsterData monsterData;
 
     float DetectionRadius { get {return monsterData.detectionRadius; } }
+    float AttackRadius { get {return monsterData.attackRadius; } }
     float WanderCooldown { get { return monsterData.wanderCooldown; } }
     float WanderRadius { get { return monsterData.wanderRadius; } }
 
@@ -77,6 +78,7 @@ public class AIController : MonoBehaviour
         if (wanderCooldownElapsed < WanderCooldown)
         {
             wanderCooldownElapsed += Time.deltaTime;
+            monsterControls.Move(Vector2.zero);
         }
         else
         {
@@ -115,13 +117,21 @@ public class AIController : MonoBehaviour
 
     void Chase()
     {
-        if (Vector2.SqrMagnitude((Vector2)chaseTarget.position - (Vector2)transform.position) < 3f)
+        float distance = Vector2.Distance(chaseTarget.position, transform.position);
+
+        if (distance < AttackRadius)
         {
+            // attack
+            monsterControls.Attack(CalculateMovementInput(chaseTarget.position));
+        }
+        else if (distance < DetectionRadius)
+        {
+            // chase
             monsterControls.Move(CalculateMovementInput(chaseTarget.position));
         }
         else
         {
-            // stop moving
+            // stop chasing
             monsterControls.Move(Vector2.zero);
             curState = AIState.Idle;
             chaseTarget = null;
@@ -136,6 +146,10 @@ public class AIController : MonoBehaviour
         // draw detection radius
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, DetectionRadius);
+
+        // draw attack radius
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawWireSphere(transform.position, AttackRadius);
 
         // draw wander radius
         Gizmos.color = Color.blue;
