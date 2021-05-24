@@ -13,3 +13,11 @@ PresetManager:
     - m_Preset: {fileID: 2655988077585873504, guid: ac34617ff32437f4e8c0d07112e12569, type: 2}
       m_Filter: glob:"Monsters/*.png"
       m_Disabled: 0
+  - first:
+      m_NativeTypeID: 212
+      m_ManagedTypePPtr: {fileID: 0}
+      m_ManagedTypeFallback: 
+    second:
+    - m_Preset: {fileID: 2655988077585873504, guid: 4c67ec9f030bb004bbdbcd2935c81874, type: 2}
+      m_Filter: 
+      m_Disabled: 0
