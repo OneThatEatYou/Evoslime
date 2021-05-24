@@ -45,11 +45,11 @@ public class AIController : MonoBehaviour
         {
             case AIState.Idle:
                 Idle();
-                DetectPlayer();
+                DetectTarget();
                 break;
             case AIState.Wander:
                 Wander();
-                DetectPlayer();
+                DetectTarget();
                 break;
             case AIState.Chase:
                 Chase();
@@ -57,18 +57,18 @@ public class AIController : MonoBehaviour
         }
     }
 
-    void DetectPlayer()
+    void DetectTarget()
     {
-        PlayerController playerController;
+        MonsterControls monster;
         Collider2D[] cols = Physics2D.OverlapCircleAll(transform.position, DetectionRadius, monsterLayer);
 
         foreach (Collider2D col in cols)
         {
-            if (col.gameObject != gameObject && col.TryGetComponent(out playerController))
+            if (col.gameObject != gameObject && col.TryGetComponent(out monster))
             {
                 //player detected
                 curState = AIState.Chase;
-                chaseTarget = playerController.transform;
+                chaseTarget = monster.transform;
             }
         }
     }
@@ -117,24 +117,32 @@ public class AIController : MonoBehaviour
 
     void Chase()
     {
-        float distance = Vector2.Distance(chaseTarget.position, transform.position);
+        if (chaseTarget != null)
+        {
+            float distance = Vector2.Distance(chaseTarget.position, transform.position);
 
-        if (distance < AttackRadius)
-        {
-            // attack
-            monsterControls.Attack(CalculateMovementInput(chaseTarget.position));
-        }
-        else if (distance < DetectionRadius)
-        {
-            // chase
-            monsterControls.Move(CalculateMovementInput(chaseTarget.position));
+            if (distance < AttackRadius)
+            {
+                // attack
+                monsterControls.Attack(CalculateMovementInput(chaseTarget.position));
+            }
+            else if (distance < DetectionRadius)
+            {
+                // chase
+                monsterControls.Move(CalculateMovementInput(chaseTarget.position));
+            }
+            else
+            {
+                // stop chasing
+                monsterControls.Move(Vector2.zero);
+                curState = AIState.Idle;
+                chaseTarget = null;
+            }
         }
         else
         {
-            // stop chasing
             monsterControls.Move(Vector2.zero);
             curState = AIState.Idle;
-            chaseTarget = null;
         }
     }
 

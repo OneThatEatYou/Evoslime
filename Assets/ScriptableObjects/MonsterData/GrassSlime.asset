@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d09f21373ddb70a4ca45e54414c417a8, type: 3}
-  m_Name: Slime
+  m_Name: GrassSlime
   m_EditorClassIdentifier: 
-  monsterName: Slime
-  maxHealth: 50
+  monsterName: Grass Slime
+  maxHealth: 70
   moveSpeed: 120
   appetite: 1000
-  damage: 10
-  diet: 00000000010000000200000003000000
-  detectionRadius: 2.1
+  damage: 15
+  diet: 000000000100000002000000
+  detectionRadius: 1.5
   attackRadius: 0.7
-  wanderCooldown: 10
+  wanderCooldown: 8
   wanderRadius: 4

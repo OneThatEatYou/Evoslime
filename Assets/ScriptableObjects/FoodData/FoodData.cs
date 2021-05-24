@@ -17,7 +17,6 @@ public enum FoodType
     Plant,
     Compost,
     Mineral,
-    Meat
 }
 
 // the type of experience held by the food
@@ -29,8 +28,6 @@ public enum NutritionType
     Rock,
     Metal,
     Gem,
-    Bone,
-    Grim
 }
 
 [System.Serializable]

@@ -16,8 +16,8 @@ public class MonsterData : ScriptableObject
     public List<FoodType> diet = new List<FoodType>();
 
     [Header("AI behaviour")]
-    public float detectionRadius;
-    public float attackRadius;
-    public float wanderCooldown;
-    public float wanderRadius;
+    public float detectionRadius = 2;
+    public float attackRadius = 0.7f;
+    public float wanderCooldown = 10;
+    public float wanderRadius = 4;
 }
