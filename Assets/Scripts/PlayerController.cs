@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     MonsterControls monsterControls;
     PlayerInputAction playerInput;
     HUDManager hudManager;
+    CameraController cameraController;
 
     private void Awake()
     {
@@ -19,8 +20,11 @@ public class PlayerController : MonoBehaviour
 
         // set up HUD
         hudManager.Init(monsterControls.monsterData);
-        monsterControls.OnHealthChangedHandler += hudManager.SetHealthSlider;
-        monsterControls.OnEatFoodHandler += hudManager.SetFoodSlider;
+        monsterControls.onHealthChangedHandler += hudManager.SetHealthSlider;
+        monsterControls.onFoodConsumedHandler += hudManager.SetFoodSlider;
+
+        cameraController = FindObjectOfType<CameraController>();
+        cameraController.target = transform;
 
         if (!monsterControls)
         {

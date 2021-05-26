@@ -6,12 +6,14 @@ using UnityEngine.UI;
 public class HUDManager : MonoBehaviour
 {
     public Slider healthSlider;
-    public Slider foodSlider;
+    public Transform foodSliderParent;
+    public GameObject foodSliderPrefab;
+
+    Dictionary<NutritionType, Slider> foodSliders = new Dictionary<NutritionType, Slider>();
 
     public void Init(MonsterData monsterData)
     {
         healthSlider.maxValue = monsterData.maxHealth;
-        foodSlider.maxValue = monsterData.appetite;
     }
 
     public void SetHealthSlider(int newValue)
@@ -19,8 +21,34 @@ public class HUDManager : MonoBehaviour
         healthSlider.value = newValue;
     }
 
-    public void SetFoodSlider(int newValue)
+    public void SetFoodSlider(Dictionary<NutritionType, int> foodConsumed, int appetite)
     {
-        foodSlider.value = newValue;
+        int lastVal = 0; // the value offset of the slider
+
+        foreach (KeyValuePair<NutritionType, int> food in foodConsumed)
+        {
+            Slider slider;
+
+            if (foodSliders.ContainsKey(food.Key))
+            {
+                // get the existing slider for the nutrition type
+                slider = foodSliders[food.Key];
+            }
+            else
+            {
+                // instantiate a slider
+                GameObject obj = Instantiate(foodSliderPrefab, foodSliderParent);
+                Image image = obj.GetComponentInChildren<Image>();
+
+                obj.transform.SetSiblingIndex(1);
+                slider = obj.GetComponent<Slider>();
+                slider.maxValue = appetite;
+                image.color = FoodData.foodColorDict[food.Key];
+                foodSliders.Add(food.Key, slider);
+            }
+
+            slider.value = lastVal + food.Value;
+            lastVal = lastVal + food.Value;
+        }
     }
 }

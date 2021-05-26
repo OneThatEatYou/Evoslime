@@ -19,7 +19,15 @@ PresetManager:
       m_ManagedTypeFallback: 
     second:
     - m_Preset: {fileID: 2655988077585873504, guid: ac34617ff32437f4e8c0d07112e12569, type: 2}
-      m_Filter: glob:"Monsters/*.png"
+      m_Filter: glob:"Sprites/**.png"
+      m_Disabled: 0
+  - first:
+      m_NativeTypeID: 483693784
+      m_ManagedTypePPtr: {fileID: 0}
+      m_ManagedTypeFallback: 
+    second:
+    - m_Preset: {fileID: 2655988077585873504, guid: b11794c2de682a84390cd909cc9170e5, type: 2}
+      m_Filter: 
       m_Disabled: 0
   - first:
       m_NativeTypeID: 212

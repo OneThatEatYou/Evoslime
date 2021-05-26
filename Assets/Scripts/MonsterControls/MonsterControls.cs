@@ -10,8 +10,9 @@ public abstract class MonsterControls : MonoBehaviour
 
     #region Delegates and Events
     public delegate void OnIntChangedHandler(int newValue);
-    public event OnIntChangedHandler OnHealthChangedHandler;
-    public event OnIntChangedHandler OnEatFoodHandler;
+    public event OnIntChangedHandler onHealthChangedHandler;
+    public delegate void OnFoodConsumedHandler(Dictionary<NutritionType, int> foodConsumed, int appetite);
+    public event OnFoodConsumedHandler onFoodConsumedHandler;
     #endregion
 
     #region Properties
@@ -26,7 +27,7 @@ public abstract class MonsterControls : MonoBehaviour
         set
         {
             health = value;
-            OnHealthChangedHandler?.Invoke(health);
+            onHealthChangedHandler?.Invoke(health);
 
             if (Health <= 0)
             {
@@ -215,7 +216,7 @@ public abstract class MonsterControls : MonoBehaviour
             }
         }
 
-        OnEatFoodHandler?.Invoke(Fullness);
+        onFoodConsumedHandler?.Invoke(foodConsumed, Appetite);
     }
     #endregion
 

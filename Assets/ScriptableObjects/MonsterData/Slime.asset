@@ -15,7 +15,7 @@ MonoBehaviour:
   monsterName: Slime
   maxHealth: 50
   moveSpeed: 120
-  appetite: 1000
+  appetite: 500
   damage: 10
   diet: 00000000010000000200000003000000
   detectionRadius: 2.1
