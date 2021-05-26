@@ -10,5 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 986873838a856cf45868fa535ff67c3b, type: 3}
-  m_Name: NewWorldMap
+  m_Name: BasicWorldMap
   m_EditorClassIdentifier: 
+  sceneRows:
+  - sceneColNames:
+    - Map_0
+    - Map_1
+    - Map_2
+  - sceneColNames:
+    - Map_3
+    - Map_4
+    - Map_5
+  - sceneColNames:
+    - Map_6
+    - Map_7
+    - Map_8

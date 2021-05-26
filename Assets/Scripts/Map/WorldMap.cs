@@ -9,8 +9,8 @@ public class WorldMap : ScriptableObject
     [System.Serializable]
     public class SceneRow
     {
-        public Scene[] sceneCols;
+        public string[] sceneColNames;
     }
 
-    public SceneRow[] map;
+    public SceneRow[] sceneRows;
 }
