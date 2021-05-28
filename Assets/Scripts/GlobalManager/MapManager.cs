@@ -6,12 +6,17 @@ using UnityEngine.SceneManagement;
 public class MapManager
 {
     public WorldMap worldMap;
+    public Vector2 mapSize = new Vector2(48, 30);
 
     // x is left, -x is right, +y is up, -y is down, (0, 0) is center
     public Vector2Int CurMapPos { get { return new Vector2Int(curMapCol - 1, 1 - curMapRow); } }
 
-    int curMapRow = 0;
-    int curMapCol = 0;
+    CameraController CamController { get { return GameObject.FindObjectOfType<CameraController>(); } }
+
+    int curMapRow = 1;
+    int curMapCol = 1;
+    bool isLoadingMap;
+
 
     public MapManager()
     {
@@ -20,23 +25,44 @@ public class MapManager
 
     void LoadMap()
     {
-        Debug.Log("Loading map");
         worldMap = Resources.Load<WorldMap>("BasicWorldMap");
     }
 
-    public void MoveToNewMap(Vector2Int dir)
+    public void MoveToNewMap(Vector2 dir)
     {
-        curMapRow -= dir.y;
-        curMapCol += dir.x;
+        if (isLoadingMap)
+        { return; }
 
-        LoadSection(worldMap.sceneRows[curMapRow].sceneColNames[curMapCol]);
+        Vector2Int dirInt = new Vector2Int(Mathf.CeilToInt(dir.x / mapSize.x), Mathf.CeilToInt(dir.y / mapSize.y));
 
-        Debug.Log($"Moving to map ({curMapRow}, {curMapCol})");
+        GameManager.Instance.StartCoroutine(LoadSection(dirInt));
     }
 
-    void LoadSection(string sceneName)
+    IEnumerator LoadSection(Vector2Int dirInt)
     {
-        Debug.Log($"Loading {sceneName}");
-        SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+        isLoadingMap = true;
+
+        string oldSceneName = worldMap.sceneRows[curMapRow].sceneColNames[curMapCol];
+        string newSceneName = worldMap.sceneRows[curMapRow - dirInt.y].sceneColNames[curMapCol + dirInt.x];
+
+        curMapRow -= dirInt.y;
+        curMapCol += dirInt.x;
+
+        AsyncOperation operation = SceneManager.LoadSceneAsync(newSceneName, LoadSceneMode.Additive);
+
+        while (!operation.isDone)
+        {
+            yield return null;
+        }
+
+        UnloadSection(oldSceneName);
+        CamController.MoveToNextSection(dirInt);
+
+        isLoadingMap = false;
+    }
+
+    void UnloadSection(string sceneName)
+    {
+        SceneManager.UnloadSceneAsync(sceneName);
     }
 }

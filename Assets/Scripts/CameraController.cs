@@ -5,7 +5,6 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [HideInInspector] public Transform target;
-    public Vector2 mapSize;
 
     [Header("Debug")]
     public bool useCameraBounds = true;
@@ -15,6 +14,7 @@ public class CameraController : MonoBehaviour
     Vector2 MaxPos { get { return new Vector2(cameraMax.x - Width/2, cameraMax.y - Height/2); } }
     Vector2 MinPos { get { return new Vector2(cameraMin.x + Width/2, cameraMin.y + Height/2); } }
     MapManager MapManager { get { return GameManager.Instance.mapManager; } }
+    Vector2 MapSize { get { return MapManager.mapSize; } }
 
     Vector2 cameraMax;  // top right of camera viewport
     Vector2 cameraMin;  // bottom left of camera viewport
@@ -28,27 +28,29 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
-        cameraMax = mapSize / 2 + MapManager.CurMapPos * mapSize;
-        cameraMin = -mapSize / 2 + MapManager.CurMapPos * mapSize;
-
-        PrintCameraBounds();
+        cameraMax = MapSize / 2 + MapManager.CurMapPos * MapSize;
+        cameraMin = -MapSize / 2 + MapManager.CurMapPos * MapSize;
     }
 
     private void Update()
     {
+        if (target == null)
+        { return; }
+
         Vector3 targetPos = target.transform.position;
 
         if (targetPos.x > cameraMax.x || targetPos.y > cameraMax.y)
         {
             // target is above or right of border
             Vector2 dir = (Vector2)targetPos - cameraMax;
-            MoveToNextSection(dir);
+            GameManager.Instance.mapManager.MoveToNewMap(dir);
+
         }
         else if (targetPos.x < cameraMin.x || targetPos.y < cameraMin.y)
         {
             // target is below or left of border
             Vector2 dir = (Vector2)targetPos - cameraMax;
-            MoveToNextSection(dir);
+            GameManager.Instance.mapManager.MoveToNewMap(dir);
         }
 
         if (useCameraBounds)
@@ -62,16 +64,10 @@ public class CameraController : MonoBehaviour
     }
 
     // offset camera min and max viewport
-    void MoveToNextSection(Vector2 dir)
+    public void MoveToNextSection(Vector2Int dirInt)
     {
-        Vector2Int dirInt = new Vector2Int(Mathf.CeilToInt(dir.x / mapSize.x), Mathf.CeilToInt(dir.y / mapSize.y));
-
-        GameManager.Instance.mapManager.MoveToNewMap(dirInt);
-
-        cameraMax += mapSize * dirInt;
-        cameraMin += mapSize * dirInt;
-
-        Debug.Log($"New cameraMax: {cameraMax}, New cameraMin: {cameraMin}");
+        cameraMax += MapSize * dirInt;
+        cameraMin += MapSize * dirInt;
     }
 
     [ContextMenu("Print camera bounds")]
@@ -109,10 +105,10 @@ public class CameraController : MonoBehaviour
         if (!Application.isPlaying)
         {
             // cameraMin and cameraMax is not set yet
-            botLeft = new Vector3(-mapSize.x / 2, -mapSize.y / 2, 0) + transform.position;
-            botRight = new Vector3(mapSize.x / 2, -mapSize.y / 2, 0) + transform.position;
-            topLeft = new Vector3(-mapSize.x / 2, mapSize.y / 2, 0) + transform.position;
-            topRight = new Vector3(mapSize.x / 2, mapSize.y / 2, 0) + transform.position;
+            botLeft = new Vector3(-MapSize.x / 2, -MapSize.y / 2, 0) + transform.position;
+            botRight = new Vector3(MapSize.x / 2, -MapSize.y / 2, 0) + transform.position;
+            topLeft = new Vector3(-MapSize.x / 2, MapSize.y / 2, 0) + transform.position;
+            topRight = new Vector3(MapSize.x / 2, MapSize.y / 2, 0) + transform.position;
         }
         else
         {

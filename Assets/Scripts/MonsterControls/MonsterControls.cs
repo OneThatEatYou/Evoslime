@@ -6,7 +6,6 @@ using UnityEngine;
 public abstract class MonsterControls : MonoBehaviour
 {
     [Expandable] public MonsterData monsterData;
-    public GameObject deathParticle;
 
     #region Delegates and Events
     public delegate void OnIntChangedHandler(int newValue);
@@ -52,6 +51,7 @@ public abstract class MonsterControls : MonoBehaviour
             return sum;
         } 
     } //sum of all nutrient values in the stomach
+    protected GameObject DeathParticle { get { return monsterData.deathParticle; } }
     #endregion
 
     public Material flashMat;
@@ -185,7 +185,7 @@ public abstract class MonsterControls : MonoBehaviour
     void Die()
     {
         Debug.Log($"{name} has died", gameObject);
-        Instantiate(deathParticle, transform.position, Quaternion.identity);
+        Instantiate(DeathParticle, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
     #endregion

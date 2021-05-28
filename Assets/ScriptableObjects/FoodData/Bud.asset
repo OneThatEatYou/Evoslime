@@ -16,4 +16,4 @@ MonoBehaviour:
   foodType: 1
   nutritions:
   - nutritionType: 1
-    amount: 100
+    amount: 80

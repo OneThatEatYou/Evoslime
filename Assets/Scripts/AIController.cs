@@ -11,7 +11,7 @@ public class AIController : MonoBehaviour
         Chase
     }
 
-    [SerializeField, Expandable] MonsterData monsterData;
+    public LayerMask monsterLayer;
 
     float DetectionRadius { get {return monsterData.detectionRadius; } }
     float AttackRadius { get {return monsterData.attackRadius; } }
@@ -19,10 +19,11 @@ public class AIController : MonoBehaviour
     float WanderRadius { get { return monsterData.wanderRadius; } }
 
     float wanderCooldownElapsed;
+    float moveTimeElapsed;
     Vector2 targetWanderPos;
     Transform chaseTarget;
     AIState curState;
-    public LayerMask monsterLayer;
+    MonsterData monsterData;
 
     MonsterControls monsterControls;
 
@@ -90,14 +91,18 @@ public class AIController : MonoBehaviour
 
     void Wander()
     {
-        if (Vector2.SqrMagnitude(targetWanderPos - (Vector2)transform.position) < 0.1f)
+        if (Vector2.SqrMagnitude(targetWanderPos - (Vector2)transform.position) < 0.1f || moveTimeElapsed > monsterData.maxWanderTime)
         {
+            // return to idle
             curState = AIState.Idle;
             monsterControls.Move(Vector2.zero);
+            moveTimeElapsed = 0;
         }
         else
         {
+            // move to target position
             monsterControls.Move(CalculateMovementInput(targetWanderPos));
+            moveTimeElapsed += Time.deltaTime;
         }
     }
 
@@ -126,23 +131,27 @@ public class AIController : MonoBehaviour
                 // attack
                 monsterControls.Attack(CalculateMovementInput(chaseTarget.position));
             }
-            else if (distance < DetectionRadius)
+            else if (moveTimeElapsed < monsterData.maxChaseTime)
             {
                 // chase
                 monsterControls.Move(CalculateMovementInput(chaseTarget.position));
+                moveTimeElapsed += Time.deltaTime;
             }
             else
             {
                 // stop chasing
+                Debug.Log("Stop chase");
                 monsterControls.Move(Vector2.zero);
                 curState = AIState.Idle;
                 chaseTarget = null;
+                moveTimeElapsed = 0;
             }
         }
         else
         {
             monsterControls.Move(Vector2.zero);
             curState = AIState.Idle;
+            moveTimeElapsed = 0;
         }
     }
 

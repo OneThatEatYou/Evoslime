@@ -16,4 +16,4 @@ MonoBehaviour:
   foodType: 0
   nutritions:
   - nutritionType: 0
-    amount: 40
+    amount: 25
