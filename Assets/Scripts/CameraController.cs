@@ -70,6 +70,7 @@ public class CameraController : MonoBehaviour
         cameraMin += MapSize * dirInt;
     }
 
+    #region Debug
     [ContextMenu("Print camera bounds")]
     void PrintCameraBounds()
     {
@@ -94,6 +95,7 @@ public class CameraController : MonoBehaviour
 
         Debug.Log($"Height: {Height}, Width: {Width}");
     }
+    #endregion
 
     private void OnDrawGizmosSelected()
     {

@@ -30,14 +30,34 @@ public class GameManager : MonoBehaviour
     #endregion
 
     public MapManager mapManager;
+    public EvolutionManager evolutionManager;
 
     private void Awake()
     {
         mapManager = new MapManager();
+        evolutionManager = new EvolutionManager();
     }
 
     public void LoadScene(int sceneIndex, LoadSceneMode loadSceneMode)
     {
         SceneManager.LoadSceneAsync(sceneIndex, loadSceneMode);
+    }
+
+    public GameObject SpawnPlayer(string activeSceneName, MonsterData monsterData)
+    {
+        Scene activeScene = SceneManager.GetSceneByName(activeSceneName);
+
+        if (!activeScene.IsValid())
+        {
+            Debug.LogWarning($"Invalid scene: {activeSceneName}");
+            return null;
+        }
+
+        SceneManager.SetActiveScene(activeScene);
+
+        GameObject player = Instantiate(monsterData.monsterPrefab, Vector2.zero, Quaternion.identity);
+        player.AddComponent<PlayerController>();
+
+        return player;
     }
 }

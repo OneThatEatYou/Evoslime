@@ -12,6 +12,8 @@ public abstract class MonsterControls : MonoBehaviour
     public event OnIntChangedHandler onHealthChangedHandler;
     public delegate void OnFoodConsumedHandler(Dictionary<NutritionType, int> foodConsumed, int appetite);
     public event OnFoodConsumedHandler onFoodConsumedHandler;
+    public delegate void OnEvolvedHandler(MonsterData newMonsterData);
+    public event OnEvolvedHandler onEvolvedHandler;
     #endregion
 
     #region Properties
@@ -69,6 +71,8 @@ public abstract class MonsterControls : MonoBehaviour
     protected Animator anim;
     protected SpriteRenderer spriteRenderer;
 
+    const string evolveParam = "Evolve";
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -94,10 +98,7 @@ public abstract class MonsterControls : MonoBehaviour
 
         if (collision.gameObject.TryGetComponent(out food))
         {
-            if (IsEdible(food) && !IsFull())
-            {
-                Eat(food.Consume());
-            }
+            AttemptEat(food);
         }
     }
 
@@ -117,6 +118,15 @@ public abstract class MonsterControls : MonoBehaviour
         anim.SetFloat("Speed", rb.velocity.magnitude);
     }
 
+    IEnumerator FlashSprite(float duration)
+    {
+        spriteRenderer.material = flashMat;
+
+        yield return new WaitForSecondsRealtime(duration);
+
+        spriteRenderer.material = startMat;
+    }
+
     #region Combat
     public abstract void Attack(Vector2 dir);
 
@@ -133,7 +143,7 @@ public abstract class MonsterControls : MonoBehaviour
         Health -= damage;
         Knockback(knockbackDir, 18);
 
-        Debug.Log($"{name} took {damage} damage", gameObject);
+        //Debug.Log($"{name} took {damage} damage", gameObject);
     }
 
     void Knockback(Vector2 dir, float force)
@@ -173,18 +183,8 @@ public abstract class MonsterControls : MonoBehaviour
         movementWeight = 1;
     }
 
-    IEnumerator FlashSprite(float duration)
-    {
-        spriteRenderer.material = flashMat;
-
-        yield return new WaitForSeconds(duration);
-
-        spriteRenderer.material = startMat;
-    }
-
     void Die()
     {
-        Debug.Log($"{name} has died", gameObject);
         Instantiate(DeathParticle, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
@@ -196,12 +196,15 @@ public abstract class MonsterControls : MonoBehaviour
         return Diet.Contains(food.ConsumableFoodType);
     }
 
-    public bool IsFull()
+    public void AttemptEat(Consumable food)
     {
-        return Fullness >= Appetite;
+        if (IsEdible(food))
+        {
+            Eat(food.Consume());
+        }
     }
 
-    public void Eat(FoodData foodData)
+    void Eat(FoodData foodData)
     {
         foreach (NutritionStruct nutririonStruct in foodData.nutritions)
         {
@@ -216,7 +219,55 @@ public abstract class MonsterControls : MonoBehaviour
             }
         }
 
-        onFoodConsumedHandler?.Invoke(foodConsumed, Appetite);
+        onFoodConsumedHandler?.Invoke(foodConsumed, Mathf.Max(Appetite, Fullness));
+    }
+    #endregion
+
+    #region Evolution
+    bool IsFull()
+    {
+        return Fullness >= Appetite;
+    }
+
+    [ContextMenu("Evolve")]
+    void Evolve()
+    {
+        MonsterData newMonsterData = GameManager.Instance.evolutionManager.GetEvolutionMonster(foodConsumed, monsterData.evolutions);
+
+        if (newMonsterData == null)
+        {
+            Debug.Log("No available evolution");
+            return;
+        }
+
+        Debug.Log($"Evolving as {newMonsterData.monsterName}");
+
+        StartCoroutine(EvolutionAnimation(newMonsterData));
+    }
+
+    IEnumerator EvolutionAnimation(MonsterData newMonsterData)
+    {
+        float totalTimeElapsed = 0;
+        float maxFlashTime = 10;
+        float startTimeScale = Time.timeScale;
+
+        Time.timeScale = 0;
+
+        while (totalTimeElapsed < maxFlashTime)
+        {
+            float flashTime = 0.05f + 0.15f * (1 - totalTimeElapsed / maxFlashTime);
+            float waitTime = 2.5f * flashTime;
+
+            StartCoroutine(FlashSprite(flashTime));
+            totalTimeElapsed += waitTime;
+
+            yield return new WaitForSecondsRealtime(waitTime);
+        }
+        
+        Time.timeScale = startTimeScale;
+
+        // switch monster
+        onEvolvedHandler?.Invoke(newMonsterData);
     }
     #endregion
 

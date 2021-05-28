@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: GrassSlime
   m_EditorClassIdentifier: 
   monsterName: Grass Slime
+  monsterPrefab: {fileID: 7496075310153919329, guid: 5cec088195c10a04c871c6f8e979738a, type: 3}
   maxHealth: 70
   moveSpeed: 120
   appetite: 1000
@@ -25,3 +26,4 @@ MonoBehaviour:
   wanderRadius: 4
   maxWanderTime: 5
   maxChaseTime: 10
+  evolutions: []

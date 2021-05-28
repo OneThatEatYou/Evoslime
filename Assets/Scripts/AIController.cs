@@ -140,7 +140,6 @@ public class AIController : MonoBehaviour
             else
             {
                 // stop chasing
-                Debug.Log("Stop chase");
                 monsterControls.Move(Vector2.zero);
                 curState = AIState.Idle;
                 chaseTarget = null;

@@ -13,6 +13,7 @@ public class HUDManager : MonoBehaviour
 
     public void Init(MonsterData monsterData)
     {
+        ClearSliders();
         healthSlider.maxValue = monsterData.maxHealth;
     }
 
@@ -29,6 +30,7 @@ public class HUDManager : MonoBehaviour
         {
             Slider slider;
 
+            // find the slider for this nutrition type
             if (foodSliders.ContainsKey(food.Key))
             {
                 // get the existing slider for the nutrition type
@@ -42,13 +44,26 @@ public class HUDManager : MonoBehaviour
 
                 obj.transform.SetSiblingIndex(1);
                 slider = obj.GetComponent<Slider>();
-                slider.maxValue = appetite;
                 image.color = FoodData.foodColorDict[food.Key];
                 foodSliders.Add(food.Key, slider);
             }
 
+            slider.maxValue = appetite;
             slider.value = lastVal + food.Value;
             lastVal = lastVal + food.Value;
         }
+    }
+
+    void ClearSliders()
+    {
+        if (foodSliders.Count > 0)
+        {
+            foreach (Slider slider in foodSliders.Values)
+            {
+                Destroy(slider.gameObject);
+            }
+        }
+
+        foodSliders = new Dictionary<NutritionType, Slider>();
     }
 }

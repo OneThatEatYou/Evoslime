@@ -212,7 +212,7 @@ Animator:
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 22100000, guid: edb111b558b9f494885e294984bd7232, type: 2}
   m_CullingMode: 0
-  m_UpdateMode: 0
+  m_UpdateMode: 2
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
@@ -269,7 +269,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   monsterData: {fileID: 11400000, guid: 29bb15eb594833e4c8b0fcfba30c088e, type: 2}
-  deathParticle: {fileID: 1564288787429725922, guid: cbfc81f3c9750194dba568da1e11b6fc, type: 3}
   flashMat: {fileID: 2100000, guid: f97ca52d375abbf4980b102fe246e036, type: 2}
   attackAreaOffset: {x: 0, y: 0.41}
   attackAreaRadius: 0.5

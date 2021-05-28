@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Slime
   m_EditorClassIdentifier: 
   monsterName: Slime
+  monsterPrefab: {fileID: 7496075310153919329, guid: 0113b816bf00d5849bed6f76253cc0a0, type: 3}
   maxHealth: 50
   moveSpeed: 120
   appetite: 500
@@ -25,3 +26,8 @@ MonoBehaviour:
   wanderRadius: 4
   maxWanderTime: 5
   maxChaseTime: 10
+  evolutions:
+  - monsterData: {fileID: 11400000, guid: 29bb15eb594833e4c8b0fcfba30c088e, type: 2}
+    minimumNutrition: []
+  - monsterData: {fileID: 11400000}
+    minimumNutrition: []
