@@ -9,12 +9,14 @@ public class CameraController : MonoBehaviour
     [Header("Debug")]
     public bool useCameraBounds = true;
 
+    #region Properties
     float Height { get { return 2f * cam.orthographicSize; } }
     float Width { get { return Height * cam.aspect; } }
     Vector2 MaxPos { get { return new Vector2(cameraMax.x - Width/2, cameraMax.y - Height/2); } }
     Vector2 MinPos { get { return new Vector2(cameraMin.x + Width/2, cameraMin.y + Height/2); } }
     MapManager MapManager { get { return GameManager.Instance.mapManager; } }
     Vector2 MapSize { get { return MapManager.mapSize; } }
+    #endregion
 
     Vector2 cameraMax;  // top right of camera viewport
     Vector2 cameraMin;  // bottom left of camera viewport
@@ -39,18 +41,13 @@ public class CameraController : MonoBehaviour
 
         Vector3 targetPos = target.transform.position;
 
-        if (targetPos.x > cameraMax.x || targetPos.y > cameraMax.y)
+        if ((targetPos.x > cameraMax.x || targetPos.y > cameraMax.y || targetPos.x < cameraMin.x || targetPos.y < cameraMin.y) && !MapManager.IsLoadingMap)
         {
-            // target is above or right of border
-            Vector2 dir = (Vector2)targetPos - cameraMax;
-            GameManager.Instance.mapManager.MoveToNewMap(dir);
+            // target is out of camera view
+            Vector2 dir = (Vector2)targetPos - MapManager.CurMapPos * MapSize;
+            Vector2Int dirInt = new Vector2Int(Mathf.RoundToInt(dir.x / MapSize.x), Mathf.RoundToInt(dir.y / MapSize.y));
 
-        }
-        else if (targetPos.x < cameraMin.x || targetPos.y < cameraMin.y)
-        {
-            // target is below or left of border
-            Vector2 dir = (Vector2)targetPos - cameraMax;
-            GameManager.Instance.mapManager.MoveToNewMap(dir);
+            GameManager.Instance.mapManager.MoveToNewMap(dirInt);
         }
 
         if (useCameraBounds)

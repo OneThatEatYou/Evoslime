@@ -5,23 +5,22 @@ using UnityEngine;
 public class SlimeControls : MonsterControls
 {
     [Header("Attack")]
-    public Vector2 attackAreaOffset;
     public float attackAreaRadius;
     public LayerMask attackLayerMask;
-    Vector2 AttackAreaOrigin { get { return (Vector2)transform.position + attackAreaOffset; } } // the world position of attack area
-    List<MonsterControls> damagedMonsters = new List<MonsterControls>();
 
     [Header("Attack Animation")]
     public float chargeTime;
     public float attackTime;
     public float dashSpeed;
 
+    List<MonsterControls> damagedMonsters = new List<MonsterControls>();
+
     public override void Attack(Vector2 dir)
     {
         if (isAttacking)
         { return; }
 
-        anim.SetTrigger("Attack");
+        anim.SetTrigger(animAttackParam);
 
         StartCoroutine(Tackle(dir));
     }
@@ -45,7 +44,7 @@ public class SlimeControls : MonsterControls
             rb.velocity = dashSpeed * dir * Mathf.Pow(1 - t / attackTime, 2);
             t += Time.deltaTime;
 
-            Collider2D[] cols = Physics2D.OverlapCircleAll(AttackAreaOrigin, attackAreaRadius, attackLayerMask);
+            Collider2D[] cols = Physics2D.OverlapCircleAll(SpriteCenterPos, attackAreaRadius, attackLayerMask);
             ProcessTargets(cols);
 
             yield return null;
@@ -74,6 +73,6 @@ public class SlimeControls : MonsterControls
         base.OnDrawGizmosSelected();
 
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(AttackAreaOrigin, attackAreaRadius);
+        Gizmos.DrawWireSphere(SpriteCenterPos, attackAreaRadius);
     }
 }

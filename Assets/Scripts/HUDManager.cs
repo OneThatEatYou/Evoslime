@@ -62,8 +62,8 @@ public class HUDManager : MonoBehaviour
             {
                 Destroy(slider.gameObject);
             }
-        }
 
-        foodSliders = new Dictionary<NutritionType, Slider>();
+            foodSliders = new Dictionary<NutritionType, Slider>();
+        }
     }
 }

@@ -5,8 +5,6 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator))]
 public abstract class MonsterControls : MonoBehaviour
 {
-    [Expandable] public MonsterData monsterData;
-
     #region Delegates and Events
     public delegate void OnIntChangedHandler(int newValue);
     public event OnIntChangedHandler onHealthChangedHandler;
@@ -54,29 +52,35 @@ public abstract class MonsterControls : MonoBehaviour
         } 
     } //sum of all nutrient values in the stomach
     protected GameObject DeathParticle { get { return monsterData.deathParticle; } }
-    protected Vector2 spriteCenterPos { get { return (Vector2)transform.position + Vector2.up * spriteHeight; } }
+    protected Vector2 SpriteCenterPos { get { return (Vector2)transform.position + Vector2.up * spriteHeight; } }
     #endregion
 
+    [Expandable] public MonsterData monsterData;
     public Material flashMat;
-
-    [Space(10)]
-    [Tooltip("Where the center of the sprite should be relative to this object's position")]
+    [Tooltip("The center of the sprite relative to this object's position")]
     public float spriteHeight;
 
     protected bool isAttacking = false;
-    bool isKnockingBack = false;
-    bool isInvinsible = false;
-    float movementWeight = 1;
-    Coroutine knockBackTimer;
     protected int direction = -1;
     protected Dictionary<NutritionType, int> foodConsumed = new Dictionary<NutritionType, int>();
-    protected Material startMat;
 
     protected Rigidbody2D rb;
     protected Animator anim;
     protected SpriteRenderer spriteRenderer;
 
-    const string evolveParam = "Evolve";
+    bool isKnockingBack = false;
+    bool isInvinsible = false;
+    float movementWeight = 1;
+    Coroutine knockBackTimer;
+    Material startMat;
+
+    protected const string animDirParam = "Direction";
+    protected const string animSpeedParam = "Speed";
+    protected const string animAttackParam = "Attack";
+
+    const float hurtFlashTime = 0.2f;
+    const float knockbackDuration = 0.5f;
+    const float knockbackRecoveryTime = 0.2f;
 
     private void Awake()
     {
@@ -116,11 +120,11 @@ public abstract class MonsterControls : MonoBehaviour
 
         if (input.x != 0)
         {
-            anim.SetFloat("Direction", input.x);
+            anim.SetFloat(animDirParam, input.x);
             direction = Mathf.RoundToInt(input.x);
         }
 
-        anim.SetFloat("Speed", rb.velocity.magnitude);
+        anim.SetFloat(animSpeedParam, rb.velocity.magnitude);
     }
 
     IEnumerator FlashSprite(float duration)
@@ -143,17 +147,16 @@ public abstract class MonsterControls : MonoBehaviour
 
         // hurt animation
         // hurt sfx
-        StartCoroutine(FlashSprite(0.2f));
 
-        Health -= damage;
+        StartCoroutine(FlashSprite(hurtFlashTime));
         Knockback(knockbackDir, 18);
 
-        //Debug.Log($"{name} took {damage} damage", gameObject);
+        Health -= damage;
     }
 
     void Knockback(Vector2 dir, float force)
     {
-        if (dir.x == 0 && dir.y == 0)
+        if (dir.sqrMagnitude == 0)
         { return; }
 
         if (isKnockingBack)
@@ -165,7 +168,7 @@ public abstract class MonsterControls : MonoBehaviour
         isInvinsible = true;
         rb.velocity = Vector2.zero;
         rb.AddForce(dir * force, ForceMode2D.Impulse);
-        knockBackTimer = StartCoroutine(KnockbackRecoveryTimer(0.5f, 0.2f));
+        knockBackTimer = StartCoroutine(KnockbackRecoveryTimer(knockbackDuration, knockbackRecoveryTime));
     }
 
     IEnumerator KnockbackRecoveryTimer(float knockbackTime, float recoveryTime)
@@ -235,7 +238,7 @@ public abstract class MonsterControls : MonoBehaviour
     }
 
     [ContextMenu("Evolve")]
-    void Evolve()
+    public void Evolve()
     {
         MonsterData newMonsterData = GameManager.Instance.evolutionManager.GetEvolutionMonster(foodConsumed, monsterData.evolutions);
 
@@ -244,8 +247,6 @@ public abstract class MonsterControls : MonoBehaviour
             Debug.Log("No available evolution");
             return;
         }
-
-        Debug.Log($"Evolving as {newMonsterData.monsterName}");
 
         StartCoroutine(EvolutionAnimation(newMonsterData));
     }
@@ -260,14 +261,12 @@ public abstract class MonsterControls : MonoBehaviour
 
         while (totalTimeElapsed < maxFlashTime)
         {
-            //float flashTime = 0.05f + 0.15f * (1 - totalTimeElapsed / maxFlashTime);
-            //float waitTime = 2.5f * flashTime;
-
             float flashTime = 0.1f;
             float waitTime = flashTime + 0.2f * (1 - totalTimeElapsed / maxFlashTime);
 
             StartCoroutine(FlashSprite(flashTime));
-            Instantiate(GameManager.Instance.evolutionManager.evolutionParticle, spriteCenterPos, Quaternion.identity);
+            Instantiate(GameManager.Instance.evolutionManager.evolutionParticle, SpriteCenterPos, Quaternion.identity);
+
             totalTimeElapsed += waitTime;
 
             yield return new WaitForSecondsRealtime(waitTime);
@@ -286,7 +285,7 @@ public abstract class MonsterControls : MonoBehaviour
     {
         Debug.Log($"Nutrition types consumed: {foodConsumed.Count}");
 
-        foreach (var kvp in foodConsumed)
+        foreach (KeyValuePair<NutritionType, int> kvp in foodConsumed)
         {
             Debug.Log(kvp.Key + " = " + kvp.Value);
         }
@@ -295,6 +294,6 @@ public abstract class MonsterControls : MonoBehaviour
 
     public virtual void OnDrawGizmosSelected()
     {
-        Gizmos.DrawWireSphere(spriteCenterPos, 0.1f);
+        Gizmos.DrawWireSphere(SpriteCenterPos, 0.1f);
     }
 }

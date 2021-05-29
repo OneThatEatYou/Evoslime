@@ -43,6 +43,9 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadSceneAsync(sceneIndex, loadSceneMode);
     }
 
+    /// <summary>
+    /// Instantiate player as a new monster (active scene will be switched to the input active scene)
+    /// </summary>
     public GameObject SpawnPlayer(string activeSceneName, MonsterData monsterData)
     {
         Scene activeScene = SceneManager.GetSceneByName(activeSceneName);

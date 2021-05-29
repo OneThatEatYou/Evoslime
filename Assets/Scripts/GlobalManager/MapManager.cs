@@ -8,15 +8,15 @@ public class MapManager
     public WorldMap worldMap;
     public Vector2 mapSize = new Vector2(48, 30);
 
-    // x is left, -x is right, +y is up, -y is down, (0, 0) is center
+    // +x is right, -x is left, +y is up, -y is down, (0, 0) is center
     public Vector2Int CurMapPos { get { return new Vector2Int(curMapCol - 1, 1 - curMapRow); } }
+    bool isLoadingMap;
+    public bool IsLoadingMap { get { return isLoadingMap; } }
 
     CameraController CamController { get { return GameObject.FindObjectOfType<CameraController>(); } }
 
     int curMapRow = 1;
     int curMapCol = 1;
-    bool isLoadingMap;
-
 
     public MapManager()
     {
@@ -28,13 +28,8 @@ public class MapManager
         worldMap = Resources.Load<WorldMap>("BasicWorldMap");
     }
 
-    public void MoveToNewMap(Vector2 dir)
+    public void MoveToNewMap(Vector2Int dirInt)
     {
-        if (isLoadingMap)
-        { return; }
-
-        Vector2Int dirInt = new Vector2Int(Mathf.CeilToInt(dir.x / mapSize.x), Mathf.CeilToInt(dir.y / mapSize.y));
-
         GameManager.Instance.StartCoroutine(LoadSection(dirInt));
     }
 
