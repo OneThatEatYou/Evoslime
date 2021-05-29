@@ -69,8 +69,10 @@ public class SlimeControls : MonsterControls
         }
     }
 
-    private void OnDrawGizmosSelected()
+    public override void OnDrawGizmosSelected()
     {
+        base.OnDrawGizmosSelected();
+
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(AttackAreaOrigin, attackAreaRadius);
     }

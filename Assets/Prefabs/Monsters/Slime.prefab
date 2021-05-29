@@ -270,6 +270,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   monsterData: {fileID: 11400000, guid: 7c9236a5d8ff9dd4baab56669bcab80f, type: 2}
   flashMat: {fileID: 2100000, guid: f97ca52d375abbf4980b102fe246e036, type: 2}
+  spriteHeight: 0.3
   attackAreaOffset: {x: 0, y: 0.41}
   attackAreaRadius: 0.5
   attackLayerMask:

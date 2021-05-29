@@ -54,9 +54,14 @@ public abstract class MonsterControls : MonoBehaviour
         } 
     } //sum of all nutrient values in the stomach
     protected GameObject DeathParticle { get { return monsterData.deathParticle; } }
+    protected Vector2 spriteCenterPos { get { return (Vector2)transform.position + Vector2.up * spriteHeight; } }
     #endregion
 
     public Material flashMat;
+
+    [Space(10)]
+    [Tooltip("Where the center of the sprite should be relative to this object's position")]
+    public float spriteHeight;
 
     protected bool isAttacking = false;
     bool isKnockingBack = false;
@@ -248,17 +253,21 @@ public abstract class MonsterControls : MonoBehaviour
     IEnumerator EvolutionAnimation(MonsterData newMonsterData)
     {
         float totalTimeElapsed = 0;
-        float maxFlashTime = 10;
+        float maxFlashTime = 8;
         float startTimeScale = Time.timeScale;
 
         Time.timeScale = 0;
 
         while (totalTimeElapsed < maxFlashTime)
         {
-            float flashTime = 0.05f + 0.15f * (1 - totalTimeElapsed / maxFlashTime);
-            float waitTime = 2.5f * flashTime;
+            //float flashTime = 0.05f + 0.15f * (1 - totalTimeElapsed / maxFlashTime);
+            //float waitTime = 2.5f * flashTime;
+
+            float flashTime = 0.1f;
+            float waitTime = flashTime + 0.2f * (1 - totalTimeElapsed / maxFlashTime);
 
             StartCoroutine(FlashSprite(flashTime));
+            Instantiate(GameManager.Instance.evolutionManager.evolutionParticle, spriteCenterPos, Quaternion.identity);
             totalTimeElapsed += waitTime;
 
             yield return new WaitForSecondsRealtime(waitTime);
@@ -283,4 +292,9 @@ public abstract class MonsterControls : MonoBehaviour
         }
     }
     #endregion
+
+    public virtual void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawWireSphere(spriteCenterPos, 0.1f);
+    }
 }

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class EvolutionManager
 {
+    public GameObject evolutionParticle;
+
     public EvolutionManager()
     {
         Init();
@@ -11,7 +13,12 @@ public class EvolutionManager
 
     void Init()
     {
+        LoadAssets();
+    }
 
+    void LoadAssets()
+    {
+        evolutionParticle = Resources.Load<GameObject>("EvolutionParticle");
     }
 
     /// <summary>
