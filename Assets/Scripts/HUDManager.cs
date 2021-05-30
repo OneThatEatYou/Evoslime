@@ -8,6 +8,7 @@ public class HUDManager : MonoBehaviour
     public Slider healthSlider;
     public Transform foodSliderParent;
     public GameObject foodSliderPrefab;
+    public GameObject evolutionPrompt;
 
     Dictionary<NutritionType, Slider> foodSliders = new Dictionary<NutritionType, Slider>();
 
@@ -64,6 +65,20 @@ public class HUDManager : MonoBehaviour
             }
 
             foodSliders = new Dictionary<NutritionType, Slider>();
+        }
+    }
+
+    public void SetEvolutionPrompt(bool canEvolve)
+    {
+        Debug.Log("Can Evolve: " + canEvolve);
+
+        if (canEvolve)
+        {
+            evolutionPrompt.SetActive(true);
+        }
+        else
+        {
+            evolutionPrompt.SetActive(false);
         }
     }
 }

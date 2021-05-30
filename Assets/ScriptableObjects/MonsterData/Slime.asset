@@ -29,6 +29,12 @@ MonoBehaviour:
   maxChaseTime: 10
   evolutions:
   - monsterData: {fileID: 11400000, guid: 29bb15eb594833e4c8b0fcfba30c088e, type: 2}
-    minimumNutrition: []
+    minimumNutrition:
+    - nutritionType: 1
+      amount: 200
+    - nutritionType: 0
+      amount: 100
   - monsterData: {fileID: 11400000, guid: 6e69639de390d5040ae4c6e545e42d44, type: 2}
-    minimumNutrition: []
+    minimumNutrition:
+    - nutritionType: 3
+      amount: 300

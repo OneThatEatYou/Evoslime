@@ -20,6 +20,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Evolve",
+                    "type": "Button",
+                    "id": "4caa2d41-3443-4d82-83c6-d9caaeead12b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -141,6 +149,17 @@
                     "processors": "",
                     "groups": "Keyboard and mouse",
                     "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a136ac45-4017-415f-804d-48f1ea199711",
+                    "path": "<Keyboard>/e",
+                    "interactions": "Hold(duration=1)",
+                    "processors": "",
+                    "groups": "Keyboard and mouse",
+                    "action": "Evolve",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

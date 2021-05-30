@@ -6,12 +6,12 @@ using UnityEngine;
 public abstract class MonsterControls : MonoBehaviour
 {
     #region Delegates and Events
-    public delegate void OnIntChangedHandler(int newValue);
-    public event OnIntChangedHandler onHealthChangedHandler;
-    public delegate void OnFoodConsumedHandler(Dictionary<NutritionType, int> foodConsumed, int appetite);
-    public event OnFoodConsumedHandler onFoodConsumedHandler;
-    public delegate void OnEvolvedHandler(MonsterData newMonsterData);
-    public event OnEvolvedHandler onEvolvedHandler;
+    public delegate void OnValueChangedDelegate<T>(T newValue);
+    public event OnValueChangedDelegate<int> onHealthChangedHandler;
+    public event OnValueChangedDelegate<MonsterData> onEvolvedHandler;
+    public event OnValueChangedDelegate<bool> onFoodConsumedBoolHandler;
+    public delegate void OnFoodConsumedDelegate(Dictionary<NutritionType, int> foodConsumed, int appetite);
+    public event OnFoodConsumedDelegate onFoodConsumedHandler;
     #endregion
 
     #region Properties
@@ -55,6 +55,7 @@ public abstract class MonsterControls : MonoBehaviour
     } //sum of all nutrient values in the stomach
     protected GameObject DeathParticle { get { return monsterData.deathParticle; } }
     protected Vector2 SpriteCenterPos { get { return (Vector2)transform.position + Vector2.up * spriteHeight; } }
+    protected EvolutionManager EvolutionManager { get { return GameManager.Instance.evolutionManager; } }
     #endregion
 
     [Expandable] public MonsterData monsterData;
@@ -86,7 +87,7 @@ public abstract class MonsterControls : MonoBehaviour
     protected const string animIdleState = "Idle";
 
     const float restCooldown = 10;           // number of seconds to wait before entering rest state
-    const float healthRegenInterval = 5;    // number of seconds between each health regen when resting
+    const float healthRegenInterval = 3;    // number of seconds between each health regen when resting
     const float hurtFlashTime = 0.2f;
     const float knockbackDuration = 0.5f;
     const float knockbackRecoveryTime = 0.2f;
@@ -173,8 +174,6 @@ public abstract class MonsterControls : MonoBehaviour
 
         isResting = true;
         healthRegenCR = StartCoroutine(RegenHealth());
-
-        Debug.Log("Start Resting");
     }
 
     void ExitRestState()
@@ -188,8 +187,6 @@ public abstract class MonsterControls : MonoBehaviour
         isResting = false;
 
         StopCoroutine(healthRegenCR);
-
-        Debug.Log("Stop resting");
     }
 
     IEnumerator RegenHealth()
@@ -302,6 +299,7 @@ public abstract class MonsterControls : MonoBehaviour
         }
 
         onFoodConsumedHandler?.Invoke(foodConsumed, Mathf.Max(Appetite, Fullness));
+        onFoodConsumedBoolHandler?.Invoke(CanEvolve());
     }
     #endregion
 
@@ -311,14 +309,27 @@ public abstract class MonsterControls : MonoBehaviour
         return Fullness >= Appetite;
     }
 
+    bool CanEvolve()
+    {
+        if (IsFull() && EvolutionManager.GetEvolutionMonster(foodConsumed, monsterData.evolutions))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     [ContextMenu("Evolve")]
     public void Evolve()
     {
-        MonsterData newMonsterData = GameManager.Instance.evolutionManager.GetEvolutionMonster(foodConsumed, monsterData.evolutions);
+        if (!CanEvolve())
+        { return; }
+
+        MonsterData newMonsterData = EvolutionManager.GetEvolutionMonster(foodConsumed, monsterData.evolutions);
 
         if (newMonsterData == null)
         {
-            Debug.Log("No available evolution");
+            Debug.LogWarning("Attempting to evolving as null. Aborting evolution.");
             return;
         }
 

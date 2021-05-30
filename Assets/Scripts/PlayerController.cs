@@ -36,7 +36,9 @@ public class PlayerController : MonoBehaviour
 
         monsterControls.onHealthChangedHandler += hudManager.SetHealthSlider;
         monsterControls.onFoodConsumedHandler += hudManager.SetFoodSlider;
+        monsterControls.onFoodConsumedBoolHandler += hudManager.SetEvolutionPrompt;
         playerInput.Player.Attack.performed += contex => monsterControls.Attack(movementInput);
+        playerInput.Player.Evolve.performed += contex => monsterControls.Evolve();
         monsterControls.onEvolvedHandler += SwitchPlayerMonster;
     }
 
@@ -46,7 +48,9 @@ public class PlayerController : MonoBehaviour
 
         monsterControls.onHealthChangedHandler -= hudManager.SetHealthSlider;
         monsterControls.onFoodConsumedHandler -= hudManager.SetFoodSlider;
+        monsterControls.onFoodConsumedBoolHandler -= hudManager.SetEvolutionPrompt;
         playerInput.Player.Attack.performed -= contex => monsterControls.Attack(movementInput);
+        playerInput.Player.Evolve.performed -= contex => monsterControls.Evolve();
         monsterControls.onEvolvedHandler -= SwitchPlayerMonster;
     }
 
