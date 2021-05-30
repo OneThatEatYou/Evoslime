@@ -15,6 +15,7 @@ MonoBehaviour:
   monsterName: Slime
   monsterPrefab: {fileID: 7496075310153919329, guid: 0113b816bf00d5849bed6f76253cc0a0, type: 3}
   maxHealth: 50
+  healthRegen: 5
   moveSpeed: 120
   appetite: 500
   damage: 10
@@ -29,5 +30,5 @@ MonoBehaviour:
   evolutions:
   - monsterData: {fileID: 11400000, guid: 29bb15eb594833e4c8b0fcfba30c088e, type: 2}
     minimumNutrition: []
-  - monsterData: {fileID: 11400000}
+  - monsterData: {fileID: 11400000, guid: 6e69639de390d5040ae4c6e545e42d44, type: 2}
     minimumNutrition: []

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5977794871362311800}
   - component: {fileID: 2878641024122167912}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: ShadowSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -92,7 +92,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7496075308840968089}
   - component: {fileID: 7496075308840968090}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: MonsterSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -153,7 +153,7 @@ SpriteRenderer:
   m_SortingLayerID: -1349507559
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: -7910132016454502554, guid: 88099feb53733404ba79e1b7d67d4c58, type: 3}
+  m_Sprite: {fileID: -8876198970946483060, guid: 0196ebd44454fa24b85f0268bfda009e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -177,8 +177,8 @@ GameObject:
   - component: {fileID: 7496075310153919332}
   - component: {fileID: 7496075310153919331}
   - component: {fileID: 7496075310153919330}
-  m_Layer: 6
-  m_Name: Slime
+  m_Layer: 7
+  m_Name: PebbleSlime
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -210,7 +210,7 @@ Animator:
   m_GameObject: {fileID: 7496075310153919329}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 699a8ca8b0773934990a2a5301fb5356, type: 2}
+  m_Controller: {fileID: 22100000, guid: a48e62ca89f6c3a49b74586e7a1a9707, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 2
   m_ApplyRootMotion: 0
@@ -268,14 +268,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cb436bbafa72114190506b241281ce6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monsterData: {fileID: 11400000, guid: 7c9236a5d8ff9dd4baab56669bcab80f, type: 2}
+  monsterData: {fileID: 11400000, guid: 6e69639de390d5040ae4c6e545e42d44, type: 2}
   flashMat: {fileID: 2100000, guid: f97ca52d375abbf4980b102fe246e036, type: 2}
   evolutionParticle: {fileID: 1564288787429725922, guid: 79b6be19dc70bec488e408f2b7fd2ab9, type: 3}
   spriteHeight: 0.3
   attackAreaRadius: 0.5
+  dashSpeed: 8
   attackLayerMask:
     serializedVersion: 2
     m_Bits: 192
   chargeTime: 0.5
   attackTime: 0.9
-  dashSpeed: 10

@@ -270,7 +270,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   monsterData: {fileID: 11400000, guid: 29bb15eb594833e4c8b0fcfba30c088e, type: 2}
   flashMat: {fileID: 2100000, guid: f97ca52d375abbf4980b102fe246e036, type: 2}
-  attackAreaOffset: {x: 0, y: 0.41}
+  evolutionParticle: {fileID: 1564288787429725922, guid: 79b6be19dc70bec488e408f2b7fd2ab9, type: 3}
+  spriteHeight: 0.3
   attackAreaRadius: 0.5
   attackLayerMask:
     serializedVersion: 2

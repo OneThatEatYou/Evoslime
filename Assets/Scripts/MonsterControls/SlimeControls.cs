@@ -6,23 +6,39 @@ public class SlimeControls : MonsterControls
 {
     [Header("Attack")]
     public float attackAreaRadius;
+    public float dashSpeed = 10;
     public LayerMask attackLayerMask;
 
     [Header("Attack Animation")]
     public float chargeTime;
     public float attackTime;
-    public float dashSpeed;
 
     List<MonsterControls> damagedMonsters = new List<MonsterControls>();
+    Coroutine tackleCR;
 
     public override void Attack(Vector2 dir)
     {
-        if (isAttacking)
+        base.Attack(dir);
+
+        if (isAttacking || isKnockingBack)
         { return; }
 
         anim.SetTrigger(animAttackParam);
 
-        StartCoroutine(Tackle(dir));
+        tackleCR = StartCoroutine(Tackle(dir));
+    }
+
+    public override void CancelAttack()
+    {
+        if (!isAttacking)
+        { return; }
+
+        StopCoroutine(tackleCR);
+        damagedMonsters.Clear();
+        anim.Play(animIdleState, 0);
+
+        isAttacking = false;
+        rb.velocity = Vector2.zero;
     }
 
     IEnumerator Tackle(Vector2 dir)

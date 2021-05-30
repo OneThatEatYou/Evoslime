@@ -11,8 +11,9 @@ public class MonsterData : ScriptableObject
 
     [Header("Stats")]
     public int maxHealth = 100;
+    public int healthRegen = 5;
     public float moveSpeed = 100;
-    [Tooltip("Max value displayable in food bar")] public int appetite = 1000;
+    public int appetite = 1000;
     public int damage;
     public GameObject deathParticle;
 

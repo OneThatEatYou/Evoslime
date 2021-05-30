@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: PebbleSlime
+  m_Controller: {fileID: 9100000, guid: 699a8ca8b0773934990a2a5301fb5356, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 181d5dbf911f18442b7f93836fa4381c, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 62ffceb59e95ca44c871a4bb1f2e92a5, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 8df472e5e20fd1146b5b3f2e70800781, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 14e6bfe6cdc0d5748b5556e4fc7f1a03, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 3afd41cf1c0e6234e9648f2314e9249c, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 1b7964c16c852f64791720cbd978a754, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: e9a4cb788901bc54f8179153cd0432e3, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: d8048ff5e8011a04394215aa415849f7, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 1a616dd55f0dcd142803050a4330da18, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: b3bc058a19674494ca8221216de8cde6, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 222e808fc5781864f8cdafca5d1a89b7, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 972336b46086de344bf1db40ccbfbf82, type: 2}

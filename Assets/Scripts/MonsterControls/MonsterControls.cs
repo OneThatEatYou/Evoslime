@@ -26,6 +26,8 @@ public abstract class MonsterControls : MonoBehaviour
         set
         {
             health = value;
+            health = Mathf.Clamp(health, 0, MaxHealth);
+
             onHealthChangedHandler?.Invoke(health);
 
             if (Health <= 0)
@@ -57,10 +59,12 @@ public abstract class MonsterControls : MonoBehaviour
 
     [Expandable] public MonsterData monsterData;
     public Material flashMat;
+    public GameObject evolutionParticle;
     [Tooltip("The center of the sprite relative to this object's position")]
     public float spriteHeight;
 
     protected bool isAttacking = false;
+    protected bool isKnockingBack = false;
     protected int direction = -1;
     protected Dictionary<NutritionType, int> foodConsumed = new Dictionary<NutritionType, int>();
 
@@ -68,19 +72,25 @@ public abstract class MonsterControls : MonoBehaviour
     protected Animator anim;
     protected SpriteRenderer spriteRenderer;
 
-    bool isKnockingBack = false;
+    bool isResting = false;
     bool isInvinsible = false;
     float movementWeight = 1;
+    float restTimeElapsed = 0;
     Coroutine knockBackTimer;
+    Coroutine healthRegenCR;
     Material startMat;
 
     protected const string animDirParam = "Direction";
     protected const string animSpeedParam = "Speed";
     protected const string animAttackParam = "Attack";
+    protected const string animIdleState = "Idle";
 
+    const float restCooldown = 10;           // number of seconds to wait before entering rest state
+    const float healthRegenInterval = 5;    // number of seconds between each health regen when resting
     const float hurtFlashTime = 0.2f;
     const float knockbackDuration = 0.5f;
     const float knockbackRecoveryTime = 0.2f;
+    const float knockbackForce = 18;
 
     private void Awake()
     {
@@ -97,7 +107,7 @@ public abstract class MonsterControls : MonoBehaviour
 
     private void Update()
     {
-        
+        CheckToRest();
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -136,8 +146,70 @@ public abstract class MonsterControls : MonoBehaviour
         spriteRenderer.material = startMat;
     }
 
+    #region Rest
+    void CheckToRest()
+    {
+        if (isResting)
+        { return; }
+
+        if (restTimeElapsed < restCooldown)
+        {
+            restTimeElapsed += Time.deltaTime;
+        }
+        else
+        {
+            EnterRestState();
+        }
+    }
+
+    void EnterRestState()
+    {
+        // don't do anything if the monster is already resting
+        if (isResting)
+        {
+            Debug.LogWarning("Attempting to rest when monster is already resting", gameObject);
+            return; 
+        }
+
+        isResting = true;
+        healthRegenCR = StartCoroutine(RegenHealth());
+
+        Debug.Log("Start Resting");
+    }
+
+    void ExitRestState()
+    {
+        restTimeElapsed = 0;
+        
+        // only resets rest time elapsed if the monster is not resting
+        if (!isResting)
+        { return; }
+
+        isResting = false;
+
+        StopCoroutine(healthRegenCR);
+
+        Debug.Log("Stop resting");
+    }
+
+    IEnumerator RegenHealth()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(healthRegenInterval);
+
+            Health += monsterData.healthRegen;
+        }
+    }
+    #endregion
+
     #region Combat
-    public abstract void Attack(Vector2 dir);
+    public virtual void Attack(Vector2 dir)
+    {
+        ExitRestState();
+    }
+
+    public abstract void CancelAttack();
 
     // called when another monster attacks this monster
     public void TakeDamage(int damage, Vector2 knockbackDir)
@@ -148,8 +220,10 @@ public abstract class MonsterControls : MonoBehaviour
         // hurt animation
         // hurt sfx
 
+        CancelAttack();
         StartCoroutine(FlashSprite(hurtFlashTime));
-        Knockback(knockbackDir, 18);
+        Knockback(knockbackDir, knockbackForce);
+        ExitRestState();
 
         Health -= damage;
     }
@@ -265,7 +339,7 @@ public abstract class MonsterControls : MonoBehaviour
             float waitTime = flashTime + 0.2f * (1 - totalTimeElapsed / maxFlashTime);
 
             StartCoroutine(FlashSprite(flashTime));
-            Instantiate(GameManager.Instance.evolutionManager.evolutionParticle, SpriteCenterPos, Quaternion.identity);
+            Instantiate(evolutionParticle, SpriteCenterPos, Quaternion.identity);
 
             totalTimeElapsed += waitTime;
 

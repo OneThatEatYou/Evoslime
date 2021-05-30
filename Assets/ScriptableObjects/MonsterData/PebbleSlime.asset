@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d09f21373ddb70a4ca45e54414c417a8, type: 3}
-  m_Name: GrassSlime
+  m_Name: PebbleSlime
   m_EditorClassIdentifier: 
-  monsterName: Grass Slime
-  monsterPrefab: {fileID: 7496075310153919329, guid: 5cec088195c10a04c871c6f8e979738a, type: 3}
-  maxHealth: 70
-  healthRegen: 5
-  moveSpeed: 120
+  monsterName: Pebble Slime
+  monsterPrefab: {fileID: 7496075310153919329, guid: bc78761408bd7624192bab1e52f85032, type: 3}
+  maxHealth: 100
+  healthRegen: 3
+  moveSpeed: 90
   appetite: 800
   damage: 15
-  deathParticle: {fileID: 1564288787429725922, guid: 33073a132ca343f4a8abd49033d84bd7, type: 3}
-  diet: 000000000100000002000000
+  deathParticle: {fileID: 1564288787429725922, guid: 1aa671556bf5b8448857b885472c0c9a, type: 3}
+  diet: 000000000200000003000000
   detectionRadius: 1.5
   attackRadius: 0.7
   wanderCooldown: 8
