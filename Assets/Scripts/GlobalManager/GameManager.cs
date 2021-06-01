@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -29,18 +30,93 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
+    public Vector2 ScreenPixelSize { get { return new Vector2(Screen.width, Screen.height); } }
+
     public MapManager mapManager;
     public EvolutionManager evolutionManager;
+    public AudioManager audioManager;
+
+    Image fadeImage;
+
+    bool isFading;
 
     private void Awake()
     {
         mapManager = new MapManager();
         evolutionManager = new EvolutionManager();
+        audioManager = new AudioManager();
+
+        CreateFadeCanvas();
     }
 
-    public void LoadScene(int sceneIndex, LoadSceneMode loadSceneMode)
+    private void OnEnable()
     {
-        SceneManager.LoadSceneAsync(sceneIndex, loadSceneMode);
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+    {
+        StartCoroutine(FadeAndChangeScene(1, 0));
+    }
+
+    public void ChangeScene(string sceneName, float fadeTime = 1)
+    {
+        if (!isFading)
+        {
+            StartCoroutine(FadeAndChangeScene(0, 1, sceneName, fadeTime));
+        }
+    }
+
+    void CreateFadeCanvas()
+    {
+        //creates image overlay for fading in and out
+        GameObject fadeCanvasGO = new GameObject("FadeCanvas");
+        Canvas fadeCanvas = fadeCanvasGO.AddComponent<Canvas>();
+        fadeCanvasGO.AddComponent<GraphicRaycaster>();
+
+        CanvasScaler canvasScaler = fadeCanvasGO.AddComponent<CanvasScaler>();
+        canvasScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        canvasScaler.referenceResolution = new Vector2(960, 540);
+        canvasScaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+        canvasScaler.matchWidthOrHeight = 0.5f;
+
+        fadeCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        fadeCanvas.sortingOrder = 2;
+        fadeCanvasGO.GetComponent<RectTransform>().sizeDelta = ScreenPixelSize;
+        fadeImage = fadeCanvasGO.AddComponent<Image>();
+        fadeImage.raycastTarget = false;
+        fadeImage.color = Color.clear;
+        fadeCanvasGO.transform.SetParent(transform);
+    }
+
+    public IEnumerator FadeAndChangeScene(int start, int target, string sceneName = "", float fadeTime = 2)
+    {
+        //fade out scene
+        Color fadeCol = fadeImage.color;
+        float t = 0;
+
+        fadeCol.a = start;
+
+        while (Mathf.Abs(fadeImage.color.a - target) > 0.001f)
+        {
+            fadeCol.a = Mathf.SmoothStep(start, target, t / fadeTime);
+            fadeImage.color = fadeCol;
+            t += Time.deltaTime;
+
+            yield return null;
+        }
+
+        fadeCol.a = target;
+
+        if (sceneName != "")
+        {
+            SceneManager.LoadSceneAsync(sceneName);
+        }
     }
 
     /// <summary>

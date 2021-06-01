@@ -16,8 +16,10 @@ public class AIController : MonoBehaviour
     float DetectionRadius { get {return monsterData.detectionRadius; } }
     float AttackRadius { get {return monsterData.attackRadius; } }
     float WanderCooldown { get { return monsterData.wanderCooldown; } }
+    float WanderCooldownVariance { get { return monsterData.wanderCooldownVariance; } }
     float WanderRadius { get { return monsterData.wanderRadius; } }
 
+    float curWanderCooldown;
     float wanderCooldownElapsed;
     float moveTimeElapsed;
     Vector2 targetWanderPos;
@@ -76,7 +78,7 @@ public class AIController : MonoBehaviour
 
     void Idle()
     {
-        if (wanderCooldownElapsed < WanderCooldown)
+        if (wanderCooldownElapsed < curWanderCooldown)
         {
             wanderCooldownElapsed += Time.deltaTime;
             monsterControls.Move(Vector2.zero);
@@ -96,6 +98,7 @@ public class AIController : MonoBehaviour
             // return to idle
             curState = AIState.Idle;
             monsterControls.Move(Vector2.zero);
+            curWanderCooldown = WanderCooldown + Random.Range(-WanderCooldownVariance, WanderCooldownVariance);
             moveTimeElapsed = 0;
         }
         else
@@ -143,6 +146,7 @@ public class AIController : MonoBehaviour
                 monsterControls.Move(Vector2.zero);
                 curState = AIState.Idle;
                 chaseTarget = null;
+                curWanderCooldown = WanderCooldown + Random.Range(-WanderCooldownVariance, WanderCooldownVariance);
                 moveTimeElapsed = 0;
             }
         }
@@ -150,6 +154,7 @@ public class AIController : MonoBehaviour
         {
             monsterControls.Move(Vector2.zero);
             curState = AIState.Idle;
+            curWanderCooldown = WanderCooldown + Random.Range(-WanderCooldownVariance, WanderCooldownVariance);
             moveTimeElapsed = 0;
         }
     }

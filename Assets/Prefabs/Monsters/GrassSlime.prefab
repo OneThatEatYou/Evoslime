@@ -271,11 +271,17 @@ MonoBehaviour:
   monsterData: {fileID: 11400000, guid: 29bb15eb594833e4c8b0fcfba30c088e, type: 2}
   flashMat: {fileID: 2100000, guid: f97ca52d375abbf4980b102fe246e036, type: 2}
   evolutionParticle: {fileID: 1564288787429725922, guid: 79b6be19dc70bec488e408f2b7fd2ab9, type: 3}
+  evolutionSparkSFX: {fileID: 8300000, guid: 5a07199e044557e459bf9e969d546f1e, type: 3}
+  evolutionCompleteSFX: {fileID: 8300000, guid: 16a39148f1071ed44aa90350fc56ce06, type: 3}
   spriteHeight: 0.3
+  deathParticle: {fileID: 1564288787429725922, guid: 33073a132ca343f4a8abd49033d84bd7, type: 3}
+  deathSFX: {fileID: 8300000, guid: bc724305fc6753140a8b895c506e5013, type: 3}
   attackAreaRadius: 0.5
+  dashSpeed: 10
   attackLayerMask:
     serializedVersion: 2
     m_Bits: 192
   chargeTime: 0.5
   attackTime: 0.9
-  dashSpeed: 10
+  tackleSFX: {fileID: 8300000, guid: f3ac0825cd6609f41a61ef617dd6d7fd, type: 3}
+  hitSFX: {fileID: 8300000, guid: b447a3b13d9574c4d89b97efb7cc4ca2, type: 3}

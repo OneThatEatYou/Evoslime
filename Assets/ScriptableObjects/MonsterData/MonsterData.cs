@@ -15,7 +15,6 @@ public class MonsterData : ScriptableObject
     public float moveSpeed = 100;
     public int appetite = 1000;
     public int damage;
-    public GameObject deathParticle;
 
     [Space(10)]
     public List<FoodType> diet = new List<FoodType>();
@@ -24,6 +23,7 @@ public class MonsterData : ScriptableObject
     public float detectionRadius = 2;
     public float attackRadius = 0.7f;
     public float wanderCooldown = 10;
+    public float wanderCooldownVariance = 2;
     public float wanderRadius = 4;
     public float maxWanderTime = 5;
     public float maxChaseTime = 10;

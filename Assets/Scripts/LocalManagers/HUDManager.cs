@@ -70,15 +70,6 @@ public class HUDManager : MonoBehaviour
 
     public void SetEvolutionPrompt(bool canEvolve)
     {
-        Debug.Log("Can Evolve: " + canEvolve);
-
-        if (canEvolve)
-        {
-            evolutionPrompt.SetActive(true);
-        }
-        else
-        {
-            evolutionPrompt.SetActive(false);
-        }
+        evolutionPrompt.SetActive(canEvolve);
     }
 }

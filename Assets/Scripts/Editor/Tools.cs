@@ -6,18 +6,24 @@ using UnityEngine.SceneManagement;
 
 public class Tools
 {
-    static EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
-
-    // Add a menu item with multiple levels of nesting
     [MenuItem("Tools/LoadMapScenes")]
     private static void LoadMapScenes()
     {
-        Debug.Log($"Loading {scenes.Length} scenes");
+        WorldMap worldMap = Resources.Load<WorldMap>("BasicWorldMap");
 
-        foreach (var scene in scenes)
+        foreach (WorldMap.SceneRow sceneRow in worldMap.sceneRows)
         {
-            Debug.Log($"Loading {scene.path}");
-            EditorSceneManager.OpenScene(scene.path, OpenSceneMode.Additive);
+            foreach (string sceneName in sceneRow.sceneColNames)
+            {
+                Debug.Log($"Loading {sceneName}");
+                EditorSceneManager.OpenScene($"Assets/Scenes/{sceneName}.unity", OpenSceneMode.Additive);
+            }
         }
+    }
+
+    [MenuItem("Tools/SpawnOneShotAudio")]
+    private static void SpawnOneShotAudioSource()
+    {
+        AudioManager.PlayAudioAtPosition(null, Vector2.zero, null, false);
     }
 }

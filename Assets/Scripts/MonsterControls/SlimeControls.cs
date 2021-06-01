@@ -13,6 +13,10 @@ public class SlimeControls : MonsterControls
     public float chargeTime;
     public float attackTime;
 
+    [Header("Attack SFX")]
+    public AudioClip tackleSFX;
+    public AudioClip hitSFX;
+
     List<MonsterControls> damagedMonsters = new List<MonsterControls>();
     Coroutine tackleCR;
 
@@ -55,6 +59,8 @@ public class SlimeControls : MonsterControls
 
         yield return new WaitForSeconds(chargeTime);
 
+        AudioManager.PlayAudioAtPosition(tackleSFX, transform.position, AudioManager.combatSfxMixerGroup);
+
         while (t < attackTime)
         {
             rb.velocity = dashSpeed * dir * Mathf.Pow(1 - t / attackTime, 2);
@@ -80,6 +86,7 @@ public class SlimeControls : MonsterControls
             {
                 targetControls.TakeDamage(monsterData.damage, target.transform.position - transform.position);
                 damagedMonsters.Add(targetControls);
+                AudioManager.PlayAudioAtPosition(hitSFX, transform.position, AudioManager.combatSfxMixerGroup);
             }
         }
     }

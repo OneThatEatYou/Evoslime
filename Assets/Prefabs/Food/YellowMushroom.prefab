@@ -175,4 +175,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70210016e9b9f2e4d8a42b4314bea890, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  consumeSFX:
+  - {fileID: 8300000, guid: bcdcd90353447df43a2cec8eee81d7ac, type: 3}
+  - {fileID: 8300000, guid: c1dd1a0a20a533b40a7a9fabc2e7a899, type: 3}
   foodData: {fileID: 11400000, guid: f996c58d66c77a44da579c37c3b4ba1e, type: 2}

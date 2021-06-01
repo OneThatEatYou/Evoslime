@@ -32,6 +32,8 @@ public class CameraController : MonoBehaviour
     {
         cameraMax = MapSize / 2 + MapManager.CurMapPos * MapSize;
         cameraMin = -MapSize / 2 + MapManager.CurMapPos * MapSize;
+
+        MapManager.MoveToNewMap(new Vector2Int(0, 0));
     }
 
     private void Update()

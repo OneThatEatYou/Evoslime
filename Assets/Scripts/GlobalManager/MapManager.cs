@@ -20,10 +20,10 @@ public class MapManager
 
     public MapManager()
     {
-        LoadMap();
+        LoadWorldMap();
     }
 
-    void LoadMap()
+    void LoadWorldMap()
     {
         worldMap = Resources.Load<WorldMap>("BasicWorldMap");
     }
@@ -50,7 +50,12 @@ public class MapManager
             yield return null;
         }
 
-        UnloadSection(oldSceneName);
+        if (dirInt.sqrMagnitude != 0)
+        {
+            // map did not move
+            UnloadSection(oldSceneName);
+        }
+
         CamController.MoveToNextSection(dirInt);
 
         isLoadingMap = false;

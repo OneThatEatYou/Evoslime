@@ -19,11 +19,11 @@ MonoBehaviour:
   moveSpeed: 90
   appetite: 800
   damage: 15
-  deathParticle: {fileID: 1564288787429725922, guid: 1aa671556bf5b8448857b885472c0c9a, type: 3}
   diet: 000000000200000003000000
   detectionRadius: 1.5
   attackRadius: 0.7
-  wanderCooldown: 8
+  wanderCooldown: 12
+  wanderCooldownVariance: 2
   wanderRadius: 4
   maxWanderTime: 5
   maxChaseTime: 10

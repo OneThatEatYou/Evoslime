@@ -53,7 +53,6 @@ public abstract class MonsterControls : MonoBehaviour
             return sum;
         } 
     } //sum of all nutrient values in the stomach
-    protected GameObject DeathParticle { get { return monsterData.deathParticle; } }
     protected Vector2 SpriteCenterPos { get { return (Vector2)transform.position + Vector2.up * spriteHeight; } }
     protected EvolutionManager EvolutionManager { get { return GameManager.Instance.evolutionManager; } }
     #endregion
@@ -61,8 +60,12 @@ public abstract class MonsterControls : MonoBehaviour
     [Expandable] public MonsterData monsterData;
     public Material flashMat;
     public GameObject evolutionParticle;
+    public AudioClip evolutionSparkSFX;
+    public AudioClip evolutionCompleteSFX;
     [Tooltip("The center of the sprite relative to this object's position")]
     public float spriteHeight;
+    public GameObject deathParticle;
+    public AudioClip deathSFX;
 
     protected bool isAttacking = false;
     protected bool isKnockingBack = false;
@@ -264,7 +267,8 @@ public abstract class MonsterControls : MonoBehaviour
 
     void Die()
     {
-        Instantiate(DeathParticle, transform.position, Quaternion.identity);
+        AudioManager.PlayAudioAtPosition(deathSFX, transform.position, AudioManager.combatSfxMixerGroup);
+        Instantiate(deathParticle, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
     #endregion
@@ -342,6 +346,10 @@ public abstract class MonsterControls : MonoBehaviour
         float maxFlashTime = 8;
         float startTimeScale = Time.timeScale;
 
+        // create SFX audio source
+        AudioSource evoSfxSource = AudioManager.PlayAudioAtPosition(null, transform.position, AudioManager.combatSfxMixerGroup, false);
+        evoSfxSource.clip = evolutionSparkSFX;
+
         Time.timeScale = 0;
 
         while (totalTimeElapsed < maxFlashTime)
@@ -352,12 +360,18 @@ public abstract class MonsterControls : MonoBehaviour
             StartCoroutine(FlashSprite(flashTime));
             Instantiate(evolutionParticle, SpriteCenterPos, Quaternion.identity);
 
+            evoSfxSource.Play();
+
             totalTimeElapsed += waitTime;
 
             yield return new WaitForSecondsRealtime(waitTime);
         }
         
         Time.timeScale = startTimeScale;
+
+        evoSfxSource.clip = evolutionCompleteSFX;
+        evoSfxSource.Play();
+        Destroy(evoSfxSource.gameObject, evolutionCompleteSFX.length);
 
         // switch monster
         onEvolvedHandler?.Invoke(newMonsterData);
