@@ -32,10 +32,10 @@ public class AudioManager
 
         AudioSource source = obj.AddComponent<AudioSource>();
         source.clip = audioClip;
-        source.spatialBlend = 1;
+        source.spatialBlend = 0.5f;
         source.dopplerLevel = 0;
         source.spread = 45;
-        source.maxDistance = 10;
+        source.maxDistance = 20;
         source.outputAudioMixerGroup = mixerGroup;
         source.Play();
 

@@ -40,6 +40,9 @@ public class GameManager : MonoBehaviour
 
     bool isFading;
 
+    public const string mainSceneName = "GlobalScene";
+    public const string mainMenuSceneName = "MainMenu";
+
     private void Awake()
     {
         mapManager = new MapManager();
@@ -62,9 +65,11 @@ public class GameManager : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
         StartCoroutine(FadeAndChangeScene(1, 0));
+
+        Time.timeScale = 1;
     }
 
-    public void ChangeScene(string sceneName, float fadeTime = 1)
+    public void ChangeScene(string sceneName, float fadeTime = 2)
     {
         if (!isFading)
         {
@@ -106,7 +111,7 @@ public class GameManager : MonoBehaviour
         {
             fadeCol.a = Mathf.SmoothStep(start, target, t / fadeTime);
             fadeImage.color = fadeCol;
-            t += Time.deltaTime;
+            t += Time.unscaledDeltaTime;
 
             yield return null;
         }
