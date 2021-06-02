@@ -12,6 +12,8 @@ public abstract class MonsterControls : MonoBehaviour
     public event OnValueChangedDelegate<bool> onFoodConsumedBoolHandler;
     public delegate void OnFoodConsumedDelegate(Dictionary<NutritionType, int> foodConsumed, int appetite);
     public event OnFoodConsumedDelegate onFoodConsumedHandler;
+    public delegate void OnDeathDelegate();
+    public event OnDeathDelegate onDeathHandler;
     #endregion
 
     #region Properties
@@ -265,11 +267,14 @@ public abstract class MonsterControls : MonoBehaviour
         movementWeight = 1;
     }
 
+    [ContextMenu("Die")]
     void Die()
     {
         AudioManager.PlayAudioAtPosition(deathSFX, transform.position, AudioManager.combatSfxMixerGroup);
         Instantiate(deathParticle, transform.position, Quaternion.identity);
         Destroy(gameObject);
+
+        onDeathHandler?.Invoke();
     }
     #endregion
 

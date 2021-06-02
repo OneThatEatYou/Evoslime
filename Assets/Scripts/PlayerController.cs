@@ -34,23 +34,28 @@ public class PlayerController : MonoBehaviour
     {
         playerInput.Enable();
 
+        playerInput.Player.Attack.performed += contex => monsterControls.Attack(movementInput);
+        playerInput.Player.Evolve.performed += contex => monsterControls.Evolve();
+
         monsterControls.onHealthChangedHandler += hudManager.SetHealthSlider;
         monsterControls.onFoodConsumedHandler += hudManager.SetFoodSlider;
         monsterControls.onFoodConsumedBoolHandler += hudManager.SetEvolutionPrompt;
-        playerInput.Player.Attack.performed += contex => monsterControls.Attack(movementInput);
-        playerInput.Player.Evolve.performed += contex => monsterControls.Evolve();
         monsterControls.onEvolvedHandler += SwitchPlayerMonster;
+
+        // not unreferenced on disabled or else it wont be called when destroyed
+        monsterControls.onDeathHandler += GameOver;
     }
 
     private void OnDisable()
     {
         playerInput.Disable();
 
+        playerInput.Player.Attack.performed -= contex => monsterControls.Attack(movementInput);
+        playerInput.Player.Evolve.performed -= contex => monsterControls.Evolve();
+
         monsterControls.onHealthChangedHandler -= hudManager.SetHealthSlider;
         monsterControls.onFoodConsumedHandler -= hudManager.SetFoodSlider;
         monsterControls.onFoodConsumedBoolHandler -= hudManager.SetEvolutionPrompt;
-        playerInput.Player.Attack.performed -= contex => monsterControls.Attack(movementInput);
-        playerInput.Player.Evolve.performed -= contex => monsterControls.Evolve();
         monsterControls.onEvolvedHandler -= SwitchPlayerMonster;
     }
 
@@ -71,5 +76,11 @@ public class PlayerController : MonoBehaviour
         Destroy(gameObject);
 
         Debug.Log("Switched player");
+    }
+
+    void GameOver()
+    {
+        Debug.Log("Game Over");
+        hudManager.ShowGameOverPanel();
     }
 }
