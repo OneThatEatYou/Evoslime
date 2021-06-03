@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Analytics;
 
 public class GameManager : MonoBehaviour
 {
@@ -45,6 +46,17 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+            Debug.LogWarning($"Multiple instances of GameManager found. Destroying {name}");
+        }
+
         mapManager = new MapManager();
         evolutionManager = new EvolutionManager();
         audioManager = new AudioManager();
@@ -64,9 +76,13 @@ public class GameManager : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
-        StartCoroutine(FadeAndChangeScene(1, 0));
+        if (loadSceneMode == LoadSceneMode.Single)
+        {
+            Time.timeScale = 1;
 
-        Time.timeScale = 1;
+            StartCoroutine(FadeAndChangeScene(1, 0));
+            ReportGameStart();
+        }
     }
 
     public void ChangeScene(string sceneName, float fadeTime = 2)
@@ -144,4 +160,35 @@ public class GameManager : MonoBehaviour
 
         return player;
     }
+
+    #region Analytics
+    public void ReportGameStart()
+    {
+        AnalyticsResult analyticsResult = AnalyticsEvent.Custom("start_new_game");
+
+        Debug.Log($"Sent game start information to sever: {analyticsResult.ToString()}");
+    }
+
+    public void ReportPlayerEvolution(MonsterData playerMonsterData)
+    {
+        AnalyticsResult analyticsResult = AnalyticsEvent.Custom("evolution", new Dictionary<string, object>
+        {
+        { "monster_species", playerMonsterData.monsterName },
+        { "time_elapsed", Time.timeSinceLevelLoad }
+        });
+
+        Debug.Log($"Sent evolution information to sever: {analyticsResult.ToString()}");
+    }
+
+    public void ReportPlayerGameOver(MonsterData playerMonsterData)
+    {
+        AnalyticsResult analyticsResult = AnalyticsEvent.Custom("game_over", new Dictionary<string, object>
+        {
+        { "monster_species", playerMonsterData.monsterName },
+        { "time_elapsed", Time.timeSinceLevelLoad }
+        });
+
+        Debug.Log($"Sent game over information to sever: {analyticsResult.ToString()}");
+    }
+    #endregion
 }

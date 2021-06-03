@@ -81,11 +81,13 @@ public class HUDManager : MonoBehaviour
 
     public void ReturnToMainMenu()
     {
+        AudioManager.PlayAudioAtPosition(AudioManager.buttonNoSFX, transform.position, AudioManager.sfxMixerGroup, true, 0);
         GameManager.Instance.ChangeScene(GameManager.mainMenuSceneName);
     }
 
     public void RestartGame()
     {
+        AudioManager.PlayAudioAtPosition(AudioManager.buttonYesSFX, transform.position, AudioManager.sfxMixerGroup, true, 0);
         GameManager.Instance.ChangeScene(GameManager.mainSceneName);
     }
 }

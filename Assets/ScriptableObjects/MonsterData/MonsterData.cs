@@ -11,7 +11,7 @@ public class MonsterData : ScriptableObject
 
     [Header("Stats")]
     public int maxHealth = 100;
-    public int healthRegen = 5;
+    [Tooltip("Health recovered every 3 seconds")] public int healthRegen = 5;
     public float moveSpeed = 100;
     public int appetite = 1000;
     public int damage;

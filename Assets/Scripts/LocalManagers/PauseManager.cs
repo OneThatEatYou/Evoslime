@@ -59,6 +59,7 @@ public class PauseManager : MonoBehaviour
 
     public void ReturnToMainMenu()
     {
+        AudioManager.PlayAudioAtPosition(AudioManager.buttonNoSFX, transform.position, AudioManager.sfxMixerGroup, true, 0);
         GameManager.Instance.ChangeScene(GameManager.mainMenuSceneName);
     }
 }

@@ -98,26 +98,18 @@ public class CameraController : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
+        if (!Application.isPlaying)
+        { return; }
+
         Vector3 botLeft;
         Vector3 botRight;
         Vector3 topLeft;
         Vector3 topRight;
 
-        if (!Application.isPlaying)
-        {
-            // cameraMin and cameraMax is not set yet
-            botLeft = new Vector3(-MapSize.x / 2, -MapSize.y / 2, 0) + transform.position;
-            botRight = new Vector3(MapSize.x / 2, -MapSize.y / 2, 0) + transform.position;
-            topLeft = new Vector3(-MapSize.x / 2, MapSize.y / 2, 0) + transform.position;
-            topRight = new Vector3(MapSize.x / 2, MapSize.y / 2, 0) + transform.position;
-        }
-        else
-        {
-            botLeft = new Vector3(cameraMin.x, cameraMin.y, 0);
-            botRight = new Vector3(cameraMax.x, cameraMin.y, 0);
-            topLeft = new Vector3(cameraMin.x, cameraMax.y, 0);
-            topRight = new Vector3(cameraMax.x, cameraMax.y, 0);
-        }
+        botLeft = new Vector3(cameraMin.x, cameraMin.y, 0);
+        botRight = new Vector3(cameraMax.x, cameraMin.y, 0);
+        topLeft = new Vector3(cameraMin.x, cameraMax.y, 0);
+        topRight = new Vector3(cameraMax.x, cameraMax.y, 0);
 
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(topLeft, topRight);

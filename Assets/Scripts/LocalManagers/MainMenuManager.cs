@@ -39,6 +39,7 @@ public class MainMenuManager : MonoBehaviour
 
     void StartGame()
     {
+        AudioManager.PlayAudioAtPosition(AudioManager.buttonYesSFX, transform.position, AudioManager.sfxMixerGroup, true, 0);
         GameManager.Instance.ChangeScene(GameManager.mainSceneName);
     }
 

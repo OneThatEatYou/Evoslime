@@ -26,9 +26,9 @@ public class AIController : MonoBehaviour
     Transform chaseTarget;
     AIState curState;
     MonsterData monsterData;
-
     MonsterControls monsterControls;
 
+#if UNITY_EDITOR
     private void OnValidate()
     {
         if (TryGetComponent(out monsterControls))
@@ -36,10 +36,12 @@ public class AIController : MonoBehaviour
             monsterData = monsterControls.monsterData;
         }
     }
+#endif
 
     private void Awake()
     {
         monsterControls = GetComponent<MonsterControls>();
+        monsterData = monsterControls.monsterData;
     }
 
     private void Update()

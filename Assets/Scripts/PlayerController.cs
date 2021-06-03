@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour
         monsterControls.onFoodConsumedHandler += hudManager.SetFoodSlider;
         monsterControls.onFoodConsumedBoolHandler += hudManager.SetEvolutionPrompt;
         monsterControls.onEvolvedHandler += SwitchPlayerMonster;
+        monsterControls.onEvolvedHandler += GameManager.Instance.ReportPlayerEvolution;
 
         // not unreferenced on disabled or else it wont be called when destroyed
         monsterControls.onDeathHandler += GameOver;
@@ -57,6 +58,7 @@ public class PlayerController : MonoBehaviour
         monsterControls.onFoodConsumedHandler -= hudManager.SetFoodSlider;
         monsterControls.onFoodConsumedBoolHandler -= hudManager.SetEvolutionPrompt;
         monsterControls.onEvolvedHandler -= SwitchPlayerMonster;
+        monsterControls.onEvolvedHandler -= GameManager.Instance.ReportPlayerEvolution;
     }
 
     private void Update()
@@ -82,5 +84,8 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log("Game Over");
         hudManager.ShowGameOverPanel();
+        Time.timeScale = 0;
+
+        GameManager.Instance.ReportPlayerGameOver(monsterControls.monsterData);
     }
 }

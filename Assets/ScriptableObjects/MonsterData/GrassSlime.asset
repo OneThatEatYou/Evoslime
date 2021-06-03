@@ -14,16 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   monsterName: Grass Slime
   monsterPrefab: {fileID: 7496075310153919329, guid: 5cec088195c10a04c871c6f8e979738a, type: 3}
-  maxHealth: 70
-  healthRegen: 5
+  maxHealth: 80
+  healthRegen: 4
   moveSpeed: 120
   appetite: 800
   damage: 15
-  deathParticle: {fileID: 1564288787429725922, guid: 33073a132ca343f4a8abd49033d84bd7, type: 3}
   diet: 000000000100000002000000
   detectionRadius: 1.5
   attackRadius: 0.7
   wanderCooldown: 8
+  wanderCooldownVariance: 2
   wanderRadius: 4
   maxWanderTime: 5
   maxChaseTime: 10
